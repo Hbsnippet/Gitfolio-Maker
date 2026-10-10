@@ -1,69 +1,155 @@
-import Image from "next/image";
+
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+
+type GithubProfile = {
+  login: string;
+  name: string | null;
+  avatar_url: string;
+  bio: string | null;
+  html_url: string;
+  public_repos: number;
+  followers: number;
+};
 
 export default function Home() {
+  const [username, setUsername] = useState("");
+  const [profile, setProfile] = useState<GithubProfile | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (loading) return;
+
+    const cleanUsername = username.trim().replace(/^@/, "");
+
+    if (!cleanUsername) return;
+
+    setLoading(true);
+    setProfile(null);
+
+    try {
+      const response = await fetch(
+        `https://api.github.com/users/${encodeURIComponent(cleanUsername)}`
+      );
+
+      if (!response.ok) return;
+
+      const data: GithubProfile = await response.json();
+
+      if (!data?.login || !data?.avatar_url) return;
+
+      setProfile(data);
+    } catch {
+      
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-[#0a0a0a] text-white">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+        <Link href="/" className="text-xl font-bold tracking-tight">
+          gitfolio<span className="text-emerald-400">.</span>
+        </Link>
+
+        <Link
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/5"
+        >
+          GitHub ↗
+        </Link>
+      </nav>
+
+      <section className="mx-auto flex max-w-4xl flex-col items-center px-6 pb-24 pt-24 text-center sm:pt-32">
+        <div className="mb-8 rounded-full border border-emerald-400/20 bg-emerald-400/5 px-4 py-2 text-sm text-emerald-300">
+          ✳ Your code deserves to be seen
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+
+        <h1 className="max-w-3xl text-5xl font-semibold leading-tight tracking-tight sm:text-7xl">
+          Your GitHub.
+          <br />
+          <span className="text-zinc-500">
+            Your next opportunity.
+          </span>
+        </h1>
+
+        <p className="mt-6 max-w-xl text-base leading-7 text-zinc-400 sm:text-lg">
+          Turn your GitHub repositories into a developer portfolio
+          that makes your work speak for itself.
+        </p>
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-10 flex w-full max-w-xl flex-col gap-3 sm:flex-row"
+        >
+          <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-white/10 bg-[#111111] px-3 transition-colors focus-within:border-white/25">
+            <span className="text-zinc-500">@</span>
+
+            <input
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              placeholder="Your GitHub username"
+              aria-label="GitHub username"
+              autoComplete="off"
+              spellCheck={false}
+              className="w-full bg-transparent py-3 text-sm text-white outline-none ring-0 placeholder:text-zinc-600 focus:outline-none focus:ring-0"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded-xl bg-emerald-400 px-6 py-3 font-medium text-black transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            {loading ? "Fetching profile..." : "Generate portfolio →"}
+          </button>
+        </form>
+
+        <p className="mt-4 text-xs text-zinc-600">
+          Free to use · No account required to preview
+        </p>
+
+        {profile && (
+          <div className="mt-8 flex w-full max-w-xl items-center gap-4 rounded-2xl border border-white/10 bg-[#111111] p-4 text-left">
+            <img
+              src={profile.avatar_url}
+              alt={`${profile.login}'s GitHub avatar`}
+              className="h-12 w-12 shrink-0 rounded-xl object-cover"
+            />
+
+            <div className="min-w-0">
+              <p className="truncate text-base font-semibold">
+                {profile.name || profile.login}
+              </p>
+              <p className="mt-1 truncate text-sm text-zinc-400">
+                @{profile.login}
+              </p>
+
+              <p className="mt-1 truncate text-sm text-zinc-400">
+                {profile.bio}
+              </p>
+
+              <p className="mt-1 truncate text-sm text-zinc-400">
+                {profile.public_repos} repositories
+              </p>
+
+              <p className="mt-1 truncate text-sm text-zinc-400">
+                {profile.followers} followers
+              </p>
+            </div>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
