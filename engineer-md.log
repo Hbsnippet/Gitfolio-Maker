@@ -1,0 +1,400 @@
+Gitfolio Maker — engineer notes
+================================
+
+Read this when you want to know what the code is doing, why it is shaped this way, and what an interviewer can ask about it. Nothing here is a secret. The GitHub token stays in `.env.local` and is never written into this file.
+
+
+1. What this app is
+-------------------
+
+A person types a GitHub username on the home page. After a short pause, a small preview card can appear. If they press Generate and GitHub really has that user, the browser goes to a second page, `/{username}`, which is a portfolio built only from public GitHub data.
+
+Two pages:
+
+- `/` is the generator. Dark landing page. File: `app/page.tsx`.
+- `/torvalds` (or any username) is the generated portfolio. Warm cream page. File: `app/[username]/page.tsx`.
+
+The browser never talks to `api.github.com` directly. It talks to our own Next.js routes. Those routes, running on the server, call GitHub with `GITHUB_TOKEN`.
+
+
+2. Map of the important files
+-----------------------------
+
+app/page.tsx
+  Client page. Input, debounce, preview card, Generate button.
+
+app/[username]/page.tsx
+  Server page. Loads one profile and renders the portfolio sections.
+
+app/[username]/loading.tsx
+  Shown while that server page is still fetching.
+
+app/layout.tsx
+  The HTML shell around every page: fonts, `<html>`, `<body>`.
+
+app/api/github/[username]/route.ts
+  GET /api/github/torvalds → profile JSON, or an error JSON with a status code.
+
+app/api/github/[username]/repos/route.ts
+  GET /api/github/torvalds/repos → a short list of repositories.
+
+app/api/embed/route.ts
+  GET /api/embed?url=... → { embeddable: true/false }.
+  Used to be called by the project Preview modal. The current cards do not call it.
+
+lib/github.ts
+  The only place that knows how to call GitHub. Token, headers, username checks, profile, repos, contribution calendar.
+
+components/portfolio/*
+  Visual pieces of the portfolio. They receive already-fetched data. They do not call GitHub.
+
+next.config.ts
+  cacheComponents and partialPrefetching are turned on. That is why prerendering is strict.
+
+
+3. The two runtimes, said slowly
+--------------------------------
+
+Some code runs in the browser. Some code runs on the machine that serves the site. Same language, different place.
+
+"use client" at the top of `app/page.tsx` means: this file is a React component that runs in the browser. It can use useState, useEffect, and onClick. It must not read `process.env.GITHUB_TOKEN`. If you import a server secret into a client file, Next can bundle that secret into JavaScript anyone can download.
+
+`app/[username]/page.tsx` has no "use client". It is a Server Component. It runs on the server when someone requests the page. It can import `lib/github.ts` and call GitHub. The browser receives finished HTML, not the token.
+
+`components/portfolio/project-list.tsx` is "use client" only because it needs useState for the "View more" button. The repository data is passed in as props from the server page. The client component does not fetch GitHub.
+
+Interview line you can say:
+"The landing page is a client component because the form is interactive. The portfolio page is a server component so the GitHub token never reaches the browser. Interactive islands, like View more, are client components that only receive already-safe props."
+
+
+4. Flow A — typing a username
+-----------------------------
+
+Start in `app/page.tsx`.
+
+1. The input is a controlled input. `value={username}` and `onChange` call `setUsername`. React is the source of truth, not the DOM input by itself.
+
+2. `cleanGithubUsername` trims spaces and removes one leading `@`. The `@` painted beside the input is decoration. It is not part of the state. If someone pastes `@torvalds`, the `@` is stripped before the request.
+
+3. `handleUsernameChange` also hides the old preview immediately when the cleaned name no longer matches the card on screen. Typing does not navigate. Only Generate navigates.
+
+4. A `useEffect` depends on `[username]`. When the username changes:
+   - empty input → return, no request
+   - otherwise start a 450ms timer
+   - when the timer fires, `fetch("/api/github/" + encoded name)`
+   - cleanup function clears the timer and calls `controller.abort()`
+
+Why the timer exists: without it, every keystroke is an HTTP request. "t", "to", "tor"... burns the GitHub rate limit and races. This delay is called debounce. 450ms means "wait until they pause."
+
+Why AbortController exists: the user can type `torvalds`, then quickly change it to `gaearon`. The first request might return later than the second. If you always `setProfile` when a response arrives, the old user can overwrite the new one. Aborting the previous request, and also checking `controller.signal.aborted` after `response.json()`, stops that.
+
+If the response is not ok, or the JSON has no `login` or `avatar_url`, the code logs to the console and does not show a card. The UI stays quiet on purpose. Failed lookups are not error banners.
+
+Interview questions:
+- What is a controlled input?
+- What problem does debounce solve? What problem does it not solve? (A slow response can still arrive late. AbortController covers that.)
+- Why check `signal.aborted` after `await response.json()`, not only in the catch block? (The request can finish and then be aborted before you set state.)
+- Why is an empty username not an error message? (Product choice: blank form stays blank.)
+
+
+5. Flow B — pressing Generate
+-----------------------------
+
+`handleSubmit` runs on form submit. Enter and the button both submit, because the button is `type="submit"`.
+
+`event.preventDefault()` stops the browser from doing a normal form GET to `/?`. That full page load would wipe React state. You saw that bug earlier as `GET /?` in the dev server log.
+
+If `loading` is already true, return. The button is also `disabled={loading}`. Two guards: the disabled button, and the early return, so a double submit cannot start two navigations.
+
+If a preview card is already on screen and its login matches the typed name (case-insensitive), Generate navigates immediately. The profile was already confirmed.
+
+Otherwise it fetches `/api/github/...` again. Only a 200 with `login` and `avatar_url` calls:
+
+  router.push("/" + encodeURIComponent(cleanUsername))
+
+`useRouter` from `next/navigation` is the App Router router. It changes the page without a full browser reload.
+
+`finally` always sets `loading` back to false, including when the request throws. If you set loading true and return inside `try` without `finally`, the button can stay disabled forever.
+
+The button text stays "Generate portfolio →" while loading. Disabled, but the label does not change.
+
+Interview questions:
+- Why both `disabled` and `if (loading) return`?
+- What does `preventDefault` prevent here?
+- Why navigate to the cleaned username, not to whatever GitHub's `login` casing is? (The route is the name the user submitted. GitHub treats logins as case-insensitive.)
+- Why is `encodeURIComponent` used in the path? (So odd characters cannot break the URL. The server also validates the username with a regex.)
+
+
+6. Flow C — the API route
+-------------------------
+
+Browser asks for `/api/github/torvalds`.
+
+Next matches the folder `app/api/github/[username]/route.ts`. The folder name `[username]` is a dynamic segment. `params` is a Promise in this Next version. You must `await params` before reading `username`.
+
+The route file is thin. It calls `getGithubProfile` and turns the result into `NextResponse.json`.
+
+`lib/github.ts` does the real work:
+
+- `normalizeGithubUsername` decodes the path segment, trims, strips one `@`, then checks a regex. GitHub usernames are alphanumeric, may contain hyphens, cannot start or end with a hyphen, max 39 characters. Invalid → 400. No GitHub call.
+- Missing `GITHUB_TOKEN` → 500 `{ error: "GitHub integration is not configured." }`. The token value is not in the JSON.
+- `fetch("https://api.github.com/users/...")` with headers:
+    Accept: application/vnd.github+json
+    Authorization: Bearer <token>
+    X-GitHub-Api-Version: 2022-11-28
+  `cache: "no-store"` means do not serve a cached GitHub response as if it were fresh forever.
+- 404 from GitHub → 404
+- 429, or 403 with `x-ratelimit-remaining: 0` → 429
+- other failures → 401 if GitHub said 401, otherwise 502
+- success → a small object of fields we actually use, not the entire GitHub payload
+
+Why a small object: the raw user JSON has many fields. Returning only what the UI needs keeps the client contract obvious. The portfolio server function uses the same mapper, so the page and the route cannot drift into two different shapes.
+
+Status codes you should be able to say out loud:
+
+- 400 bad input, our fault to reject before calling GitHub
+- 401 GitHub rejected the token
+- 404 no such user
+- 429 rate limited
+- 500 we are missing configuration
+- 502 GitHub or the network failed; we are the gateway
+
+The repos route is the same pattern with `getGithubRepositories`. It returns up to 9 non-fork repositories in GitHub's updated order. The portfolio page does not use that route. It calls `listPublicRepositories` directly so it can rank by stars and keep up to 24. Same fetch helper, two consumers.
+
+Interview questions:
+- Why not call `api.github.com` from the browser? (Token secrecy, and you can change headers, validation, and error shape in one place.)
+- What is a Bearer token? (A secret the client of that request presents. Here the server is GitHub's client.)
+- Why can the portfolio page skip HTTP and call the function? (It is already on the server. Calling your own HTTP route from a Server Component can deadlock, because the server waits on itself.)
+- What is the difference between 404 and 502 here?
+
+
+7. Flow D — the portfolio page
+------------------------------
+
+Someone opens `/gaearon`.
+
+1. `await connection()` from `next/server`.
+2. Read `params.username`.
+3. `getGithubProfile`. If it fails, render the not-found or unavailable state. No fake profile.
+4. In parallel, `Promise.all` of:
+   - `listPublicRepositories`
+   - `getGithubContributions` (GitHub GraphQL calendar)
+5. `selectProjects` sorts non-forks by stars and keeps 24.
+6. `inferLanguages` counts the primary language of non-fork repos.
+7. Render hero, about, projects, languages, heatmap only if the calendar came back, footer.
+
+`Promise.all` means those two GitHub calls run at the same time. The page waits for both. If you awaited them one after another, the page would be slower by the sum of the two times.
+
+`loading.tsx` is the Suspense fallback for this route. Next shows it while the server page is still awaiting data. It is not a spinner you wrote inside the page.
+
+Empty bio: `profile-hero` and `about-section` render the bio paragraph only when `profile.bio` has non-whitespace text. There is no "no bio" sentence.
+
+Empty repository description: `project-list` renders the description paragraph only when the description has text.
+
+
+8. Why `await connection()` exists
+----------------------------------
+
+`next.config.ts` sets `cacheComponents: true`. Next tries to prerender pages ahead of a real user request. During that prerender, calling `Date.now()` is treated as a bug, because the time would be baked in and then be wrong later.
+
+This project has no `Date.now()` in the portfolio source. The error still said:
+
+  Route "/[username]": Next.js encountered the unstable value `Date.now()` while prerendering.
+  at PortfolioPage
+
+The stack pointed at our page because our page called `fetch` with `cache: "no-store"`. Next's own fetch cache reads the current time while it is still trying to prerender. That read is inside Next, but it happens during our render.
+
+`await connection()` tells Next: stop prerendering this component and continue when a real request arrives. Do that before the GitHub fetches. The rest of the app is not switched to fully dynamic. The loading shell can still be prepared early.
+
+Interview line:
+"I did not sprinkle `connection()` everywhere. The portfolio data is per username and must not be frozen at build time. The call sits immediately before the uncached fetch that was tripping the prerender clock."
+
+Do not "fix" this by deleting `cacheComponents` from the config unless you mean to change the whole app.
+
+
+9. What is real, inferred, or left out
+--------------------------------------
+
+Shown only if GitHub sent it:
+
+- name, else the login
+- bio
+- location, company, blog, twitter username, hireable flag
+- join year, taken from the first four characters of `created_at`, not from `Date.now()`
+- homepage, only if it is a valid http or https URL
+- primary language
+- stars, forks
+- open issues, from `open_issues_count`
+
+Inferred, and the UI says so:
+
+- "Inferred skills" and the Languages section count how many non-fork repositories list that language as their primary language. This is not a list of skills from the profile, and it is not a byte-level language breakdown. Only the latest 100 owner repositories are fetched, so the counts are from that page of results.
+
+Left out on purpose:
+
+- Contributor counts. The repository list endpoint does not include them. Fetching `/repos/{owner}/{repo}/contributors` once per card would be a burst of extra GitHub calls. A missing number is better than a made-up one.
+- Screenshots. thum.io returned a real image whose text was "Image not authorized." `onError` never ran, because the response was a valid PNG. The cards no longer call a screenshot service. The header initials are letters from the repository name, not a picture of the website.
+- A contribution heatmap when the GraphQL query fails or returns nothing. No fake green squares.
+- The embed check route is still in the repo, but the current cards do not open an iframe.
+
+GitHub quirk worth saying in an interview: `open_issues_count` includes open pull requests. GitHub counts PRs as issues. The label matches the field. It is not a pure issue count.
+
+
+10. The featured-work card
+--------------------------
+
+File: `components/portfolio/project-list.tsx`.
+
+Desktop is 3 columns (`lg:grid-cols-3`), tablet is 2 (`md:grid-cols-2`), phone is 1. Six cards show first. "View more" reveals six more from the list the server already sent. It does not fetch again.
+
+Header is a light surface: owner login, repo name, initials.
+Stats row: open issues if the field was a number, plus stars and forks.
+A one-pixel strip uses a color chosen from the language, or a stable color derived from the name if the language is unknown or unlisted. "Stable" means the same name always picks the same color. It is not random per refresh.
+Body is cream: name again, description only if present, one language badge only if present, star and fork counts, Code, and Live Demo only for a real homepage.
+
+`accentColor` does not call the network. It is a lookup table plus a sum of character codes. That is fine in render. It is not `Date.now()`.
+
+
+11. Concepts an interviewer can ask from this project
+-----------------------------------------------------
+
+Client vs Server Components
+  Where state lives. Where secrets live. Why a file with useState cannot import the token module if that module's code would ship to the browser. `lib/github.ts` is only imported from server files and route handlers.
+
+Dynamic routes
+  `app/[username]/page.tsx` and `app/api/github/[username]/route.ts`. One file, many URLs. `params` is a Promise.
+
+Route handlers
+  `export async function GET`. This is the App Router version of an API endpoint. No separate Express server.
+
+Environment variables
+  `process.env.GITHUB_TOKEN` is read on the server. Next loads `.env.local` from the Next project root, which is the `gitfolio` folder, and only when the dev server starts. A token file in the parent folder is invisible unless the app's `.env.local` points at it. Changing the token requires a restart. `NEXT_PUBLIC_` would expose a variable to the browser. This token must never have that prefix.
+
+HTTP caching vs React state
+  `cache: "no-store"` is about the server fetch cache. `useState` is about what the browser is showing. They are different caches.
+
+Validation before I/O
+  Reject a bad username locally. Do not spend a GitHub request to learn that "!!!" is not a user.
+
+Error handling policy
+  Landing page: log, do not render a banner. Portfolio page: a calm not-found state, because a direct visit to a bad URL needs an answer. Different surfaces, different policies. Be able to explain why.
+
+Race conditions
+  Debounce plus abort. Be able to walk a timeline of two keystrokes.
+
+Idempotent navigation
+  Generate on an already-confirmed profile does not need a second round trip.
+
+Parallel data loading
+  `Promise.all`.
+
+Rendering model
+  Server Component fetches, client component handles a small interaction. Suspense via `loading.tsx`.
+
+Security
+  No token in client code, no token in JSON responses, no token in this log.
+  The embed route, if used, must not fetch `http://127.0.0.1` or private IPs from a user-supplied URL. That bug is called SSRF. The route rejects localhost and private address text. It is unused by the current cards.
+
+Accessibility basics you already have
+  The username input has `aria-label`. The stats row uses `dt`/`dd` with `sr-only` on the term so the number and the label stay together for screen readers.
+
+TypeScript
+  `GithubProfile` on the landing page is a smaller type than `GithubProfile` in `lib/github.ts`. The landing page only needs the preview fields. Extra JSON fields are fine. Missing `login` is not. The `| null` on bio means "the key exists but the value may be empty." Check for trim, not only for null, so a bio of `"   "` does not render a blank paragraph.
+
+
+12. Words people pretend to know
+--------------------------------
+
+Component
+  A function that returns UI. `ProfileHero` is a component. It receives a `profile` prop. It does not go get the profile.
+
+Props
+  Arguments to a component. Data in. The parent fetched it.
+
+State
+  Data that can change after the component is on screen. `username`, `profile`, `loading`, `visibleCount`.
+
+Effect
+  `useEffect` runs after render, talks to the outside world (timers, fetch), and returns a cleanup function. Do not call `setState` synchronously at the top of an effect just to reset something you could have reset in the input handler. This project clears the stale preview inside `handleUsernameChange` for that reason. The lint rule `react-hooks/set-state-in-effect` will flag the other style.
+
+Render
+  React calling your function to describe the UI. If the description needs the current clock, prerender gets upset. Fetching remote data during render of a Server Component is normal. Fetching during render of a Client Component is not. The client uses an effect.
+
+Hook
+  `useState`, `useEffect`, `useRouter`. Hooks are functions React calls in the same order every render. Do not put them inside `if`.
+
+Encode
+  `encodeURIComponent("a b")` becomes `a%20b` so the path is one segment. The server decodes it. Do it on the way out. Validate on the way in.
+
+JSON
+  The body of our API responses. `response.json()` parses text into an object. It can throw if the body is not JSON. That throw is caught and logged on the landing page.
+
+Status code
+  The number beside an HTTP response. `response.ok` is true for 200–299 only. A 404 is a finished response, not a thrown exception. `fetch` throws on network failure, not on 404.
+
+Token
+  A password for an API. Treat it like a password. Server only.
+
+Rate limit
+  GitHub allows a limited number of unauthenticated requests per IP per hour. A token raises that limit. The landing page used to call GitHub from the browser and hit 60/hour. The server route uses the token so those browser calls share the higher quota. Debounce still matters.
+
+Regex
+  The username pattern is a gate, not a parser for every GitHub rule. It blocks obvious junk.
+
+Dynamic segment
+  A folder named `[username]`. The brackets mean "this part of the URL varies."
+
+Server action vs route handler
+  This app uses route handlers (`route.ts`) and direct function calls. It does not use `"use server"` actions.
+
+Tailwind
+  Class names like `mt-8` and `md:grid-cols-2` are styles. `md:` means "from the medium breakpoint up." The portfolio colors are written as hex (`#F5F0E6`) so the landing page's dark theme stays untouched.
+
+Suspense
+  A way to show a fallback while async work is unfinished. `loading.tsx` is that fallback for the portfolio route.
+
+
+13. A bug timeline worth remembering
+------------------------------------
+
+These happened in this project. They are good interview stories because you can explain the cause, not only the patch.
+
+Form submitted as `GET /?`.
+  The handler was not actually running, or `preventDefault` never ran, so the browser did a normal navigation and React state vanished. The submit handler must call `preventDefault` first.
+
+Errors were silent and looked like "fetch is broken."
+  `if (!response.ok) return` hid a GitHub 403 rate limit. The code was doing what it was told. The network tab, or a temporary log of `response.status`, is how you see a hidden failure.
+
+`Date.now()` during prerender, with no `Date.now()` in the file.
+  The framework's fetch cache read the clock while prerendering an uncached request. Fix the boundary (`connection()`), do not randomly replace every clock in the repo.
+
+Screenshot `onError` did not hide the broken preview.
+  The paid service returned HTTP 200 and a PNG that said "not authorized." Error handlers run when the image fails to load, not when the image successfully loads the wrong picture. Removing the URL was the fix. A prettier fallback would still have been a lie if the bad PNG loaded.
+
+Placeholder copy for missing bio and description.
+  "No description provided" is still made-up text. The product decision is to render nothing unless GitHub sent text.
+
+
+14. How to trace one request yourself
+-------------------------------------
+
+1. Run the app from the `gitfolio` directory: `bun run dev`.
+2. Open the site, type a real username, wait half a second.
+3. In the browser Network tab, you should see `/api/github/<name>` and not `api.github.com`.
+4. Click that request. Status, then the JSON. Confirm there is no `Authorization` header on this browser request and no token in the JSON.
+5. Press Generate. The address bar becomes `/<name>`.
+6. Watch the terminal running `next dev`. You should see the document request and, inside the server, the GitHub calls are not logged as browser calls.
+7. Open `/not-a-real-user-zz99`. You should get the portfolio not-found state, not a crash and not a fake person.
+
+
+15. What not to memorize blindly
+--------------------------------
+
+- Do not claim the heatmap is always there. It depends on the GraphQL call.
+- Do not claim every repo has a live demo.
+- Do not claim language bars are percentages of code. They are counts of repositories.
+- Do not claim `open_issues_count` excludes pull requests.
+- Do not put the token in a client component "just to test."
+- Do not add a screenshot API that returns 200 with an error picture and call that a preview.
+
+If you can walk flows A through D out loud, and you can say what is real versus inferred, you understand this project well enough to defend it.

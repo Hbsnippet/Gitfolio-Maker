@@ -2,7 +2,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type GithubProfile = {
   login: string;
@@ -14,10 +15,77 @@ type GithubProfile = {
   followers: number;
 };
 
+function cleanGithubUsername(value: string) {
+  return value.trim().replace(/^@/, "");
+}
+
 export default function Home() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [profile, setProfile] = useState<GithubProfile | null>(null);
   const [loading, setLoading] = useState(false);
+
+  function handleUsernameChange(value: string) {
+    const cleanUsername = cleanGithubUsername(value);
+
+    setUsername(value);
+    setProfile((current) =>
+      current &&
+      cleanUsername &&
+      current.login.toLowerCase() === cleanUsername.toLowerCase()
+        ? current
+        : null
+    );
+  }
+
+  useEffect(() => {
+    const cleanUsername = cleanGithubUsername(username);
+
+    if (!cleanUsername) return;
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/github/${encodeURIComponent(cleanUsername)}`,
+          { signal: controller.signal }
+        );
+
+        if (!response.ok) {
+          console.error("GitHub profile preview failed", {
+            username: cleanUsername,
+            status: response.status,
+          });
+          return;
+        }
+
+        const data: GithubProfile = await response.json();
+
+        if (controller.signal.aborted) return;
+
+        if (!data?.login || !data?.avatar_url) {
+          console.error("GitHub profile preview was incomplete", data);
+          return;
+        }
+
+        setProfile(data);
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+
+        console.error("GitHub profile preview failed", {
+          username: cleanUsername,
+          error,
+        });
+      }
+    }, 450);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [username]);
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
@@ -26,27 +94,43 @@ export default function Home() {
 
     if (loading) return;
 
-    const cleanUsername = username.trim().replace(/^@/, "");
+    const cleanUsername = cleanGithubUsername(username);
 
     if (!cleanUsername) return;
 
+    if (
+      profile &&
+      profile.login.toLowerCase() === cleanUsername.toLowerCase()
+    ) {
+      router.push(`/${encodeURIComponent(cleanUsername)}`);
+      return;
+    }
+
     setLoading(true);
-    setProfile(null);
 
     try {
       const response = await fetch(
-        `https://api.github.com/users/${encodeURIComponent(cleanUsername)}`
+        `/api/github/${encodeURIComponent(cleanUsername)}`
       );
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        console.error("GitHub profile request failed", {
+          username: cleanUsername,
+          status: response.status,
+        });
+        return;
+      }
 
       const data: GithubProfile = await response.json();
 
-      if (!data?.login || !data?.avatar_url) return;
+      if (!data?.login || !data?.avatar_url) {
+        console.error("GitHub profile response was incomplete", data);
+        return;
+      }
 
-      setProfile(data);
-    } catch {
-      
+      router.push(`/${encodeURIComponent(cleanUsername)}`);
+    } catch (error) {
+      console.error("GitHub profile request failed", error);
     } finally {
       setLoading(false);
     }
@@ -97,7 +181,7 @@ export default function Home() {
             <input
               type="text"
               value={username}
-              onChange={(event) => setUsername(event.target.value)}
+              onChange={(event) => handleUsernameChange(event.target.value)}
               placeholder="Your GitHub username"
               aria-label="GitHub username"
               autoComplete="off"
@@ -111,7 +195,7 @@ export default function Home() {
             disabled={loading}
             className="rounded-xl bg-emerald-400 px-6 py-3 font-medium text-black transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Fetching profile..." : "Generate portfolio →"}
+            Generate portfolio →
           </button>
         </form>
 
@@ -134,15 +218,14 @@ export default function Home() {
               <p className="mt-1 truncate text-sm text-zinc-400">
                 @{profile.login}
               </p>
-
-              <p className="mt-1 truncate text-sm text-zinc-400">
-                {profile.bio}
-              </p>
-
+              {profile.bio?.trim() && (
+                <p className="mt-1 truncate text-sm text-zinc-400">
+                  {profile.bio}
+                </p>
+              )}
               <p className="mt-1 truncate text-sm text-zinc-400">
                 {profile.public_repos} repositories
               </p>
-
               <p className="mt-1 truncate text-sm text-zinc-400">
                 {profile.followers} followers
               </p>
