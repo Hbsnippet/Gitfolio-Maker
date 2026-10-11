@@ -29,6 +29,7 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [profile, setProfile] = useState<GithubProfile | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function handleUsernameChange(value: string) {
     const cleanUsername = cleanGithubUsername(value);
@@ -102,6 +103,7 @@ export default function Home() {
     }
 
     setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch(
@@ -110,7 +112,8 @@ export default function Home() {
 
       if (!response.ok) {
         console.error("GitHub profile request failed", response.status);
-        return;
+        setError("GitHub profile request failed");
+        setLoading(false);
       }
 
       const data: GithubProfile = await response.json();
@@ -118,11 +121,12 @@ export default function Home() {
       if (!data?.login || !data?.avatar_url) return;
 
       router.push(`/${encodeURIComponent(cleanUsername)}`);
+      setLoading(false);
     } catch (error) {
       console.error("GitHub profile request failed", error);
-    } finally {
+      setError("GitHub profile request failed");
       setLoading(false);
-    }
+    } 
   }
 
   return (
