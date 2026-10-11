@@ -1,5 +1,6 @@
 "use client";
 
+import { CircleDot, Code, ExternalLink, GitFork, Star } from "lucide-react";
 import { useState } from "react";
 import type { GithubRepository } from "@/lib/github";
 
@@ -66,15 +67,15 @@ export function ProjectList({ projects }: { projects: GithubRepository[] }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
       <div className="max-w-md">
-        <h2 className="font-serif text-4xl tracking-tight">Featured work</h2>
-        <p className="mt-3 text-sm leading-6 text-[#8A7B6E]">
+        <h2 className="pf-display text-4xl tracking-tight">Featured work</h2>
+        <p className="mt-3 text-sm leading-6 text-pf-muted">
           Public repositories, ordered by stars.
         </p>
       </div>
 
       {visibleProjects.length > 0 ? (
         <>
-          <div className="mt-8 grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3">
             {visibleProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -83,14 +84,14 @@ export function ProjectList({ projects }: { projects: GithubRepository[] }) {
             <button
               type="button"
               onClick={() => setVisibleCount((count) => count + INITIAL_COUNT)}
-              className="mt-6 rounded-full border border-[#C78368] px-5 py-2 text-sm text-[#C78368] transition hover:bg-[#C78368] hover:text-[#F5F0E6]"
+              className="pf-btn pf-btn-secondary mt-6"
             >
               View more
             </button>
           )}
         </>
       ) : (
-        <p className="mt-8 rounded-2xl border border-[#E4DDD0] bg-[#FBF8F2] px-6 py-8 text-sm text-[#8A7B6E]">
+        <p className="pf-card mt-8 px-6 py-8 text-sm text-pf-muted">
           No public repositories to show.
         </p>
       )}
@@ -103,86 +104,87 @@ function ProjectCard({ project }: { project: GithubRepository }) {
   const accent = accentColor(project.language, project.name);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#E4DDD0] bg-[#FBF8F2] transition duration-200 hover:-translate-y-0.5 hover:border-[#C78368]/50">
-      <div className="bg-[#FFFcf8] px-4 py-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            {project.owner && (
-              <p className="truncate text-xs text-[#8A7B6E]">{project.owner}</p>
-            )}
-            <p className="truncate text-sm font-medium text-[#40362E]">
-              {project.name}
+    <article className="pf-card pf-card-interactive flex h-full flex-col p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          {project.owner && (
+            <p className="pf-meta truncate text-[11px] uppercase tracking-[0.14em] text-pf-faint">
+              {project.owner}
             </p>
-          </div>
-          <span
-            aria-hidden
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-[#40362E]"
-            style={{ backgroundColor: `${accent}33` }}
-          >
-            {initials(project.name)}
-          </span>
-        </div>
-        <dl className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[#8A7B6E]">
-          {project.open_issues_count !== null && (
-            <Stat label="Open issues" value={project.open_issues_count} />
           )}
-          <Stat label="Stars" value={project.stargazers_count} />
-          <Stat label="Forks" value={project.forks_count} />
-        </dl>
+          <h3
+            className="pf-display mt-1 truncate text-lg leading-snug text-pf-fg"
+            title={project.name}
+          >
+            {project.name}
+          </h3>
+        </div>
+        <span
+          aria-hidden
+          className="pf-meta flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-pf-fg"
+          style={{ backgroundColor: `${accent}2e` }}
+        >
+          {initials(project.name)}
+        </span>
       </div>
-      <div className="h-1" style={{ backgroundColor: accent }} />
-      <div className="flex flex-1 flex-col px-4 py-4">
-        <h3 className="truncate font-serif text-xl text-[#40362E]">{project.name}</h3>
-        {project.description?.trim() && (
-          <p className="mt-2 line-clamp-3 text-sm leading-6 text-[#5C5148]">
-            {project.description}
-          </p>
-        )}
-        {project.language && (
-          <div className="mt-3">
-            <span className="rounded-full border border-[#E4DDD0] bg-[#F5F0E6] px-2.5 py-1 text-xs text-[#6E7564]">
-              {project.language}
-            </span>
-          </div>
-        )}
-        <p className="mt-3 text-xs text-[#8A7B6E]">
-          {project.stargazers_count.toLocaleString()} stars
-          <span className="px-1.5 text-[#D9D3C6]">/</span>
-          {project.forks_count.toLocaleString()} forks
+
+      {project.description?.trim() ? (
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-pf-muted">
+          {project.description}
         </p>
-        <div className="mt-auto flex flex-wrap gap-2 pt-4">
+      ) : (
+        <p className="mt-3 text-sm italic text-pf-faint">No description provided.</p>
+      )}
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-pf-muted">
+        {project.language && (
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: accent }}
+            />
+            {project.language}
+          </span>
+        )}
+        <span className="inline-flex items-center gap-1.5">
+          <Star aria-hidden className="h-3.5 w-3.5" />
+          {project.stargazers_count.toLocaleString()}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <GitFork aria-hidden className="h-3.5 w-3.5" />
+          {project.forks_count.toLocaleString()}
+        </span>
+        {project.open_issues_count !== null && (
+          <span className="inline-flex items-center gap-1.5">
+            <CircleDot aria-hidden className="h-3.5 w-3.5" />
+            {project.open_issues_count.toLocaleString()}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-auto flex gap-2 pt-5">
+        <a
+          href={project.html_url}
+          target="_blank"
+          rel="noreferrer"
+          className="pf-btn pf-btn-secondary flex-1"
+        >
+          <Code aria-hidden className="h-4 w-4" />
+          Code
+        </a>
+        {demo && (
           <a
-            href={project.html_url}
+            href={demo}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full border border-[#E4DDD0] px-3 py-1.5 text-sm transition hover:border-[#40362E]"
+            className="pf-btn pf-btn-primary flex-1"
           >
-            Code
+            Live Demo
+            <ExternalLink aria-hidden className="h-4 w-4" />
           </a>
-          {demo && (
-            <a
-              href={demo}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-[#C78368] px-3 py-1.5 text-sm text-[#F5F0E6] transition hover:bg-[#B57258]"
-            >
-              Live Demo
-            </a>
-          )}
-        </div>
+        )}
       </div>
     </article>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <dt className="sr-only">{label}</dt>
-      <dd>
-        <span className="font-medium text-[#40362E]">{value.toLocaleString()}</span>{" "}
-        {label}
-      </dd>
-    </div>
   );
 }

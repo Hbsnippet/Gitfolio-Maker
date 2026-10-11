@@ -31,18 +31,18 @@ export function ProfileHero({ profile }: { profile: GithubProfile }) {
   return (
     <section className="mx-auto grid max-w-6xl items-start gap-10 px-6 pb-16 pt-6 md:grid-cols-12 md:pt-10">
       <div className="md:col-span-7 md:pt-6">
-        <p className="text-xs uppercase tracking-[0.22em] text-[#A6AD91]">
+        <p className="pf-meta text-xs uppercase tracking-[0.22em] text-pf-faint">
           Public record
         </p>
-        <h1 className="mt-4 font-serif text-5xl leading-none tracking-tight sm:text-7xl">
+        <h1 className="pf-display mt-4 text-4xl leading-[1.05] tracking-tight sm:text-6xl">
           {profile.name || profile.login}
         </h1>
-        <p className="mt-4 text-lg text-[#8A7B6E]">@{profile.login}</p>
+        <p className="pf-meta mt-4 text-lg text-pf-muted">@{profile.login}</p>
         {profile.bio && (
           <p className="mt-6 max-w-xl text-lg leading-8">{profile.bio}</p>
         )}
         {profile.location && (
-          <p className="mt-4 text-sm text-[#8A7B6E]">{profile.location}</p>
+          <p className="mt-4 text-sm text-pf-muted">{profile.location}</p>
         )}
 
         <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-4">
@@ -59,7 +59,7 @@ export function ProfileHero({ profile }: { profile: GithubProfile }) {
                 href={link.href}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full bg-[#C78368] px-4 py-2 text-sm text-[#F5F0E6] transition hover:bg-[#B57258]"
+                className="pf-btn pf-btn-secondary"
               >
                 {link.label}
               </a>
@@ -72,10 +72,10 @@ export function ProfileHero({ profile }: { profile: GithubProfile }) {
         <img
           src={profile.avatar_url}
           alt={`${profile.login}'s GitHub avatar`}
-          className="aspect-square w-full max-w-xs rounded-[2rem] object-cover shadow-[0_20px_50px_rgba(64,54,46,0.12)] md:max-w-none"
+          className="pf-avatar aspect-square w-full max-w-xs border border-pf-border object-cover shadow-[var(--pf-card-shadow)] md:max-w-none"
         />
         {year && (
-          <p className="mt-4 text-sm text-[#8A7B6E]">On GitHub since {year}</p>
+          <p className="mt-4 text-sm text-pf-muted">On GitHub since {year}</p>
         )}
       </div>
     </section>
@@ -85,10 +85,10 @@ export function ProfileHero({ profile }: { profile: GithubProfile }) {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <dt className="text-xs uppercase tracking-[0.16em] text-[#A6AD91]">
+      <dt className="pf-meta text-xs uppercase tracking-[0.16em] text-pf-faint">
         {label}
       </dt>
-      <dd className="mt-1 font-serif text-3xl">{value.toLocaleString()}</dd>
+      <dd className="pf-display mt-1 text-3xl">{value.toLocaleString()}</dd>
     </div>
   );
 }

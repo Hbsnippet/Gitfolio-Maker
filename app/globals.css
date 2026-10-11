@@ -1,26 +1,435 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-pf-bg: var(--pf-bg);
+  --color-pf-card: var(--pf-card);
+  --color-pf-card-soft: var(--pf-card-soft);
+  --color-pf-fg: var(--pf-fg);
+  --color-pf-muted: var(--pf-muted);
+  --color-pf-faint: var(--pf-faint);
+  --color-pf-border: var(--pf-border);
+  --color-pf-border-strong: var(--pf-border-strong);
+  --color-pf-accent: var(--pf-accent);
+  --color-pf-accent-hover: var(--pf-accent-hover);
+  --color-pf-on-accent: var(--pf-on-accent);
+  --color-pf-track: var(--pf-track);
+  --color-pf-bar: var(--pf-bar);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Portfolio visual presets — Editorial (default), Mono, Sketchbook. Resolved
+   from data attributes on <html> so one client control can retheme the whole
+   generated portfolio without refetching. Each preset maps to a coherent
+   light + dark appearance plus its own type and shape language. */
+:root {
+  /* Type + shape language (Editorial defaults) */
+  --pf-font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --pf-font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --pf-font-meta: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --pf-display-variation: "SOFT" 0, "WONK" 0, "opsz" 120;
+  --pf-radius-card: 1.25rem;
+  --pf-radius-pill: 999px;
+  --pf-card-border-w: 1px;
+  --pf-card-shadow: 0 1px 2px rgba(64, 54, 46, 0.04), 0 10px 30px rgba(64, 54, 46, 0.05);
+  --pf-card-shadow-hover: 0 2px 6px rgba(64, 54, 46, 0.06), 0 18px 40px rgba(64, 54, 46, 0.09);
+
+  /* Editorial — light */
+  --pf-bg: #f5f0e6;
+  --pf-aura: none;
+  --pf-card: #fbf8f2;
+  --pf-card-soft: #fffcf8;
+  --pf-fg: #40362e;
+  --pf-muted: #8a7b6e;
+  --pf-faint: #a6ad91;
+  --pf-border: #e4ddd0;
+  --pf-border-strong: #d9d3c6;
+  --pf-accent: #c78368;
+  --pf-accent-hover: #b57258;
+  --pf-on-accent: #f5f0e6;
+  --pf-track: #e7e1d4;
+  --pf-bar: #a6ad91;
+  --pf-heat-0: #e7e1d4;
+  --pf-heat-1: #d5dcc8;
+  --pf-heat-2: #a6ad91;
+  --pf-heat-3: #c78368;
+  --pf-heat-4: #8f5a45;
+}
+
+:root[data-pf-mode="dark"] {
+  --pf-bg: #221c17;
+  --pf-aura: none;
+  --pf-card: #2a231d;
+  --pf-card-soft: #302822;
+  --pf-fg: #f0e9dd;
+  --pf-muted: #b7a99a;
+  --pf-faint: #9ba383;
+  --pf-border: #3a3129;
+  --pf-border-strong: #4a4036;
+  --pf-accent: #d29379;
+  --pf-accent-hover: #c78368;
+  --pf-on-accent: #221c17;
+  --pf-track: #3a3129;
+  --pf-bar: #9ba383;
+  --pf-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.25);
+  --pf-card-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.4), 0 18px 40px rgba(0, 0, 0, 0.35);
+  --pf-heat-0: #3a3129;
+  --pf-heat-1: #4e5540;
+  --pf-heat-2: #9ba383;
+  --pf-heat-3: #d29379;
+  --pf-heat-4: #e0b09a;
+}
+
+:root[data-pf-theme="mono"] {
+  /* Mono — type + shape: monospaced display/meta, crisp near-square corners */
+  --pf-font-display: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --pf-font-meta: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --pf-display-variation: normal;
+  --pf-radius-card: 0.25rem;
+  --pf-radius-pill: 0.25rem;
+  --pf-card-shadow: none;
+  --pf-card-shadow-hover: none;
+
+  /* Mono — light */
+  --pf-bg: #ffffff;
+  --pf-aura: none;
+  --pf-card: #ffffff;
+  --pf-card-soft: #f5f5f4;
+  --pf-fg: #0a0a0a;
+  --pf-muted: #525252;
+  --pf-faint: #737373;
+  --pf-border: #e5e5e5;
+  --pf-border-strong: #d4d4d4;
+  --pf-accent: #0a0a0a;
+  --pf-accent-hover: #262626;
+  --pf-on-accent: #ffffff;
+  --pf-track: #e5e5e5;
+  --pf-bar: #0a0a0a;
+  --pf-heat-0: #f0f0f0;
+  --pf-heat-1: #d4d4d4;
+  --pf-heat-2: #a3a3a3;
+  --pf-heat-3: #525252;
+  --pf-heat-4: #0a0a0a;
+}
+
+:root[data-pf-theme="mono"][data-pf-mode="dark"] {
+  /* Mono — dark */
+  --pf-bg: #0a0a0a;
+  --pf-aura: none;
+  --pf-card: #141414;
+  --pf-card-soft: #1a1a1a;
+  --pf-fg: #fafafa;
+  --pf-muted: #a3a3a3;
+  --pf-faint: #737373;
+  --pf-border: #262626;
+  --pf-border-strong: #3a3a3a;
+  --pf-accent: #fafafa;
+  --pf-accent-hover: #e5e5e5;
+  --pf-on-accent: #0a0a0a;
+  --pf-track: #262626;
+  --pf-bar: #fafafa;
+  --pf-heat-0: #1a1a1a;
+  --pf-heat-1: #333333;
+  --pf-heat-2: #5a5a5a;
+  --pf-heat-3: #a3a3a3;
+  --pf-heat-4: #fafafa;
+}
+
+:root[data-pf-theme="sketchbook"] {
+  /* Sketchbook — type + shape: wonky serif display, hand-drawn radii + ink offset */
+  --pf-font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --pf-font-meta: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --pf-display-variation: "SOFT" 60, "WONK" 1, "opsz" 40;
+  --pf-radius-card: 1.4rem 0.9rem 1.5rem 1rem / 1rem 1.4rem 0.9rem 1.3rem;
+  --pf-radius-pill: 0.875rem;
+  --pf-card-border-w: 1.5px;
+  --pf-card-shadow: 2px 3px 0 rgba(122, 105, 82, 0.18);
+  --pf-card-shadow-hover: 3px 5px 0 rgba(122, 105, 82, 0.24);
+
+  /* Sketchbook — light */
+  --pf-bg: #f6f1e7;
+  --pf-aura: radial-gradient(1000px 600px at 50% -10%, rgba(176, 113, 79, 0.06), transparent 60%),
+    radial-gradient(900px 600px at 100% 110%, rgba(126, 138, 90, 0.07), transparent 60%);
+  --pf-card: #fcf9f2;
+  --pf-card-soft: #fffdf8;
+  --pf-fg: #33302b;
+  --pf-muted: #6e675c;
+  --pf-faint: #8c8578;
+  --pf-border: #ded5c4;
+  --pf-border-strong: #c9bca4;
+  --pf-accent: #b0714f;
+  --pf-accent-hover: #9a6242;
+  --pf-on-accent: #fbf6ec;
+  --pf-track: #eae1d0;
+  --pf-bar: #7e8a5a;
+  --pf-heat-0: #eae1d0;
+  --pf-heat-1: #d7dcc0;
+  --pf-heat-2: #a9b183;
+  --pf-heat-3: #b0714f;
+  --pf-heat-4: #8a563a;
+}
+
+:root[data-pf-theme="sketchbook"][data-pf-mode="dark"] {
+  /* Sketchbook — dark */
+  --pf-bg: #211e19;
+  --pf-aura: radial-gradient(1000px 600px at 50% -10%, rgba(201, 138, 99, 0.08), transparent 60%),
+    radial-gradient(900px 600px at 100% 110%, rgba(147, 160, 106, 0.07), transparent 60%);
+  --pf-card: #2a2620;
+  --pf-card-soft: #302b24;
+  --pf-fg: #ede6d8;
+  --pf-muted: #b3a995;
+  --pf-faint: #8e8676;
+  --pf-border: #3a352c;
+  --pf-border-strong: #4a4438;
+  --pf-accent: #c98a63;
+  --pf-accent-hover: #d89c74;
+  --pf-on-accent: #211e19;
+  --pf-track: #3a352c;
+  --pf-bar: #93a06a;
+  --pf-card-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
+  --pf-card-shadow-hover: 3px 5px 0 rgba(0, 0, 0, 0.45);
+  --pf-heat-0: #3a352c;
+  --pf-heat-1: #4e5540;
+  --pf-heat-2: #93a06a;
+  --pf-heat-3: #c98a63;
+  --pf-heat-4: #e0b09a;
+}
+
+@layer components {
+  .pf-body {
+    font-family: var(--pf-font-body);
+  }
+  .pf-display {
+    font-family: var(--pf-font-display);
+    font-variation-settings: var(--pf-display-variation, normal);
+  }
+  .pf-meta {
+    font-family: var(--pf-font-meta);
+  }
+
+  .pf-card {
+    background-color: var(--pf-card);
+    border: var(--pf-card-border-w, 1px) solid var(--pf-border);
+    border-radius: var(--pf-radius-card);
+    box-shadow: var(--pf-card-shadow);
+  }
+  .pf-card-interactive {
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .pf-card-interactive:hover {
+    border-color: var(--pf-border-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--pf-card-shadow-hover, var(--pf-card-shadow));
+  }
+
+  .pf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    height: 2.5rem;
+    padding-inline: 1rem;
+    border-radius: var(--pf-radius-pill);
+    border: 1px solid transparent;
+    font-family: var(--pf-font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease,
+      border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+  }
+  .pf-btn:focus-visible {
+    outline: 2px solid var(--pf-accent);
+    outline-offset: 2px;
+  }
+  .pf-btn:active {
+    transform: translateY(1px);
+  }
+  .pf-btn-primary {
+    background-color: var(--pf-accent);
+    color: var(--pf-on-accent);
+  }
+  .pf-btn-primary:hover {
+    background-color: var(--pf-accent-hover);
+  }
+  .pf-btn-secondary {
+    background-color: transparent;
+    color: var(--pf-fg);
+    border-color: var(--pf-border-strong);
+  }
+  .pf-btn-secondary:hover {
+    background-color: var(--pf-card-soft);
+    border-color: var(--pf-fg);
+  }
+
+  .pf-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: var(--pf-radius-pill);
+    border: 1px solid var(--pf-border);
+    background-color: var(--pf-card);
+    color: var(--pf-muted);
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+  }
+  .pf-icon-btn:hover {
+    color: var(--pf-fg);
+    border-color: var(--pf-border-strong);
+  }
+  .pf-icon-btn:focus-visible {
+    outline: 2px solid var(--pf-accent);
+    outline-offset: 2px;
+  }
+
+  .pf-avatar {
+    border-radius: var(--pf-radius-card);
+  }
+  .pf-swatch {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  .pf-card-interactive,
+  .pf-btn {
+    transition: none;
+  }
+  .pf-card-interactive:hover {
+    transform: none;
+  }
+  .pf-btn:active {
+    transform: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

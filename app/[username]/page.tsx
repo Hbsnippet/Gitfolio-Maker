@@ -51,21 +51,18 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
     return (
       <PortfolioShell>
         <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
-          <p className="text-xs uppercase tracking-[0.22em] text-[#A6AD91]">
+          <p className="pf-meta text-xs uppercase tracking-[0.22em] text-pf-faint">
             gitfolio
           </p>
-          <h1 className="mt-4 font-serif text-4xl tracking-tight">
+          <h1 className="pf-display mt-4 text-4xl tracking-tight">
             {missing ? "Profile not found" : "Portfolio unavailable"}
           </h1>
-          <p className="mt-3 text-sm leading-6 text-[#8A7B6E]">
+          <p className="mt-3 text-sm leading-6 text-pf-muted">
             {missing
               ? `No public GitHub profile matched @${username.replace(/^@/, "")}.`
               : "GitHub did not return a portfolio for this username."}
           </p>
-          <Link
-            href="/"
-            className="mt-8 rounded-full bg-[#C78368] px-4 py-2 text-sm text-[#F5F0E6]"
-          >
+          <Link href="/" className="pf-btn pf-btn-primary mt-8">
             Back to generator
           </Link>
         </div>
