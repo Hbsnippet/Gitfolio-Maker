@@ -267,7 +267,7 @@ export default function Home() {
   disabled={loading || Boolean(error)}
   className="shrink-0 rounded-lg bg-[#111318] px-4 py-2.5 text-sm font-medium text-white transform transition-all duration-200 hover:-translate-y-1 hover:bg-black hover:shadow-md active:translate-y-0 active:scale-95 active:shadow-sm disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100"
 >
-  {loading ? "..." : "Generate"}
+  {loading ? "loading" : "Generate"}
 </button>
 
 
