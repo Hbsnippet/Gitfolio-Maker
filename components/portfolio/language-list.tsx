@@ -8,7 +8,9 @@ export function LanguageList({ languages }: { languages: GithubLanguageShare[] }
   return (
     <section className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-12">
       <div className="md:col-span-4">
-        <h2 className="pf-display text-4xl tracking-tight">Languages</h2>
+        <h2 className="pf-display text-4xl tracking-tight" data-pf-marker="03 / languages">
+          Languages
+        </h2>
         <p className="mt-3 max-w-xs text-sm leading-6 text-pf-muted">
           Counted from the primary language on public repositories that are not
           forks.
@@ -24,9 +26,9 @@ export function LanguageList({ languages }: { languages: GithubLanguageShare[] }
                 {language.repositories === 1 ? "repository" : "repositories"}
               </span>
             </div>
-            <div className="mt-2 h-1.5 rounded-full bg-pf-track">
+            <div className="mt-2 h-1.5 rounded-[var(--pf-radius-pill)] bg-pf-track">
               <div
-                className="h-1.5 rounded-full bg-pf-bar"
+                className="h-1.5 rounded-[var(--pf-radius-pill)] bg-pf-bar"
                 style={{
                   width: `${Math.max(8, (language.repositories / largest) * 100)}%`,
                 }}

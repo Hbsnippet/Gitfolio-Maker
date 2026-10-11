@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -14,10 +15,12 @@ const geistMono = Geist_Mono({
 
 // Display serif for the portfolio's Editorial + Sketchbook presets. The SOFT/WONK
 // axes let both presets share one performant family while looking distinct.
+// Italic is loaded for Sketchbook's journal-style headings and annotations.
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   axes: ["SOFT", "WONK", "opsz"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -31,8 +34,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Applies saved portfolio theme/mode before paint; must live in the root
+            layout for strategy="beforeInteractive" to run on client navigations. */}
+        <Script src="/portfolio-theme-boot.js" strategy="beforeInteractive" />
+        {children}
+      </body>
     </html>
   );
 }

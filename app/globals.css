@@ -145,6 +145,11 @@
   --pf-card-border-w: 1px;
   --pf-card-shadow: 0 1px 2px rgba(64, 54, 46, 0.04), 0 10px 30px rgba(64, 54, 46, 0.05);
   --pf-card-shadow-hover: 0 2px 6px rgba(64, 54, 46, 0.06), 0 18px 40px rgba(64, 54, 46, 0.09);
+  --pf-card-pad: 1.25rem;
+  --pf-grid-gap: 1.25rem;
+  --pf-chip-radius: 999px;
+  --pf-badge-radius: 999px;
+  --pf-cell-radius: 3px;
 
   /* Editorial — light */
   --pf-bg: #f5f0e6;
@@ -193,14 +198,21 @@
 }
 
 :root[data-pf-theme="mono"] {
-  /* Mono — type + shape: monospaced display/meta, crisp near-square corners */
-  --pf-font-display: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  /* Mono — Swiss/technical: strong sans display, mono meta + stats, right angles,
+     hairline rules, zero shadow, compact information-dense cards */
+  --pf-font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --pf-font-meta: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   --pf-display-variation: normal;
-  --pf-radius-card: 0.25rem;
-  --pf-radius-pill: 0.25rem;
+  --pf-radius-card: 0;
+  --pf-radius-pill: 0;
+  --pf-card-border-w: 1px;
   --pf-card-shadow: none;
   --pf-card-shadow-hover: none;
+  --pf-card-pad: 0.875rem;
+  --pf-grid-gap: 0.75rem;
+  --pf-chip-radius: 0;
+  --pf-badge-radius: 0;
+  --pf-cell-radius: 0;
 
   /* Mono — light */
   --pf-bg: #ffffff;
@@ -248,63 +260,72 @@
 }
 
 :root[data-pf-theme="sketchbook"] {
-  /* Sketchbook — type + shape: wonky serif display, hand-drawn radii + ink offset */
+  /* Sketchbook — blush paper journal: elegant italic serif display over warm
+     sans body, soft grainy aura, quiet layered cards (no heading ornaments) */
   --pf-font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --pf-font-meta: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --pf-display-variation: "SOFT" 60, "WONK" 1, "opsz" 40;
+  --pf-display-variation: "SOFT" 60, "WONK" 1, "opsz" 60;
   --pf-radius-card: 1.4rem 0.9rem 1.5rem 1rem / 1rem 1.4rem 0.9rem 1.3rem;
   --pf-radius-pill: 0.875rem;
   --pf-card-border-w: 1.5px;
-  --pf-card-shadow: 2px 3px 0 rgba(122, 105, 82, 0.18);
-  --pf-card-shadow-hover: 3px 5px 0 rgba(122, 105, 82, 0.24);
+  --pf-card-shadow: 2px 3px 0 rgba(150, 105, 112, 0.16);
+  --pf-card-shadow-hover: 3px 5px 0 rgba(150, 105, 112, 0.22);
+  --pf-card-pad: 1.15rem;
+  --pf-grid-gap: 1.35rem;
+  --pf-chip-radius: 0.75rem;
+  --pf-badge-radius: 0.75rem;
+  --pf-cell-radius: 3px;
 
   /* Sketchbook — light */
-  --pf-bg: #f6f1e7;
-  --pf-aura: radial-gradient(1000px 600px at 50% -10%, rgba(176, 113, 79, 0.06), transparent 60%),
-    radial-gradient(900px 600px at 100% 110%, rgba(126, 138, 90, 0.07), transparent 60%);
-  --pf-card: #fcf9f2;
-  --pf-card-soft: #fffdf8;
-  --pf-fg: #33302b;
-  --pf-muted: #6e675c;
-  --pf-faint: #8c8578;
-  --pf-border: #ded5c4;
-  --pf-border-strong: #c9bca4;
-  --pf-accent: #b0714f;
-  --pf-accent-hover: #9a6242;
-  --pf-on-accent: #fbf6ec;
-  --pf-track: #eae1d0;
-  --pf-bar: #7e8a5a;
-  --pf-heat-0: #eae1d0;
-  --pf-heat-1: #d7dcc0;
-  --pf-heat-2: #a9b183;
-  --pf-heat-3: #b0714f;
-  --pf-heat-4: #8a563a;
+  --pf-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+  --pf-bg: #f8f2ef;
+  --pf-aura: var(--pf-paper-grain),
+    radial-gradient(1000px 600px at 50% -10%, rgba(181, 127, 139, 0.06), transparent 60%),
+    radial-gradient(900px 600px at 100% 110%, rgba(200, 160, 152, 0.06), transparent 60%);
+  --pf-card: #fdf8f6;
+  --pf-card-soft: #fffdfa;
+  --pf-fg: #4d403f;
+  --pf-muted: #8a716e;
+  --pf-faint: #a8948f;
+  --pf-border: #ebdbd6;
+  --pf-border-strong: #d9beb8;
+  --pf-accent: #a96b78;
+  --pf-accent-hover: #975a67;
+  --pf-on-accent: #fdf6f4;
+  --pf-track: #ecdcd8;
+  --pf-bar: #b58b93;
+  --pf-heat-0: #ecdcd8;
+  --pf-heat-1: #dcc0c4;
+  --pf-heat-2: #c3959e;
+  --pf-heat-3: #a96b78;
+  --pf-heat-4: #8c5260;
 }
 
 :root[data-pf-theme="sketchbook"][data-pf-mode="dark"] {
   /* Sketchbook — dark */
-  --pf-bg: #211e19;
-  --pf-aura: radial-gradient(1000px 600px at 50% -10%, rgba(201, 138, 99, 0.08), transparent 60%),
-    radial-gradient(900px 600px at 100% 110%, rgba(147, 160, 106, 0.07), transparent 60%);
-  --pf-card: #2a2620;
-  --pf-card-soft: #302b24;
-  --pf-fg: #ede6d8;
-  --pf-muted: #b3a995;
-  --pf-faint: #8e8676;
-  --pf-border: #3a352c;
-  --pf-border-strong: #4a4438;
-  --pf-accent: #c98a63;
-  --pf-accent-hover: #d89c74;
-  --pf-on-accent: #211e19;
-  --pf-track: #3a352c;
-  --pf-bar: #93a06a;
-  --pf-card-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
-  --pf-card-shadow-hover: 3px 5px 0 rgba(0, 0, 0, 0.45);
-  --pf-heat-0: #3a352c;
-  --pf-heat-1: #4e5540;
-  --pf-heat-2: #93a06a;
-  --pf-heat-3: #c98a63;
-  --pf-heat-4: #e0b09a;
+  --pf-bg: #251e20;
+  --pf-aura: var(--pf-paper-grain),
+    radial-gradient(1000px 600px at 50% -10%, rgba(207, 150, 161, 0.07), transparent 60%),
+    radial-gradient(900px 600px at 100% 110%, rgba(181, 132, 143, 0.06), transparent 60%);
+  --pf-card: #2d2527;
+  --pf-card-soft: #342b2d;
+  --pf-fg: #f1e6e5;
+  --pf-muted: #c0a7a7;
+  --pf-faint: #9c8686;
+  --pf-border: #3d3234;
+  --pf-border-strong: #524345;
+  --pf-accent: #cf96a1;
+  --pf-accent-hover: #ddabb4;
+  --pf-on-accent: #251e20;
+  --pf-track: #3d3234;
+  --pf-bar: #b5848f;
+  --pf-card-shadow: 2px 3px 0 rgba(15, 8, 10, 0.4);
+  --pf-card-shadow-hover: 3px 5px 0 rgba(15, 8, 10, 0.5);
+  --pf-heat-0: #3d3234;
+  --pf-heat-1: #5f4a4e;
+  --pf-heat-2: #8f646d;
+  --pf-heat-3: #cf96a1;
+  --pf-heat-4: #ecc3ca;
 }
 
 @layer components {
@@ -406,6 +427,61 @@
     width: 1rem;
     border-radius: 999px;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+  }
+
+  /* Mono — Swiss layer: uppercase display headings, numbered section markers,
+     indexed project cards, flat hover, crisp zero-offset focus. */
+  :root[data-pf-theme="mono"] h1.pf-display,
+  :root[data-pf-theme="mono"] h2.pf-display {
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+  }
+  :root[data-pf-theme="mono"] .pf-stat-value {
+    font-family: var(--pf-font-meta);
+    letter-spacing: -0.02em;
+  }
+  :root[data-pf-theme="mono"] [data-pf-marker]::before {
+    content: attr(data-pf-marker);
+    display: block;
+    font-family: var(--pf-font-meta);
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--pf-accent);
+    margin-bottom: 0.6rem;
+  }
+  :root[data-pf-theme="mono"] .pf-projects-grid {
+    counter-reset: pf-repo;
+  }
+  :root[data-pf-theme="mono"] .pf-project-card {
+    counter-increment: pf-repo;
+  }
+  :root[data-pf-theme="mono"] .pf-project-card::before {
+    content: counter(pf-repo, decimal-leading-zero);
+    font-family: var(--pf-font-meta);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    color: var(--pf-faint);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--pf-border);
+    margin-bottom: 0.75rem;
+  }
+  :root[data-pf-theme="mono"] .pf-card-interactive:hover {
+    transform: none;
+    border-color: var(--pf-fg);
+  }
+  :root[data-pf-theme="mono"] .pf-btn:focus-visible,
+  :root[data-pf-theme="mono"] .pf-icon-btn:focus-visible {
+    outline-offset: 0;
+  }
+
+  /* Sketchbook — journal layer: elegant italic serif headings for typographic
+     distinction; decoration lives in the palette and card surfaces only. */
+  :root[data-pf-theme="sketchbook"] h2.pf-display {
+    font-style: italic;
+  }
+  :root[data-pf-theme="sketchbook"] h3.pf-display {
+    font-style: italic;
   }
 }
 

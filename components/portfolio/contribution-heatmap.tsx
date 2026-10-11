@@ -30,7 +30,9 @@ export function ContributionHeatmap({ weeks }: { weeks: ContributionWeek[] }) {
     <section className="mx-auto max-w-6xl px-6 py-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="pf-display text-4xl tracking-tight">Contributions</h2>
+          <h2 className="pf-display text-4xl tracking-tight" data-pf-marker="04 / activity">
+            Contributions
+          </h2>
           <p className="mt-3 text-sm text-pf-muted">
             {total.toLocaleString()} contributions recorded by GitHub from {start}{" "}
             to {end}.
@@ -48,7 +50,7 @@ export function ContributionHeatmap({ weeks }: { weeks: ContributionWeek[] }) {
                 <span
                   key={day.date}
                   title={`${day.date}: ${day.count} contributions`}
-                  className="h-3 w-3 rounded-[3px]"
+                  className="h-3 w-3 rounded-[var(--pf-cell-radius)]"
                   style={{ backgroundColor: LEVELS[level(day.count, max)] }}
                 />
               ))}

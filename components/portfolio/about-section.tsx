@@ -23,7 +23,9 @@ export function AboutSection({
   return (
     <section className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-12">
       <div className="md:col-span-4">
-        <h2 className="pf-display text-4xl tracking-tight">About</h2>
+        <h2 className="pf-display text-4xl tracking-tight" data-pf-marker="01 / about">
+          About
+        </h2>
       </div>
       <div className="md:col-span-7 md:col-start-6">
         {profile.bio?.trim() && (
@@ -63,7 +65,7 @@ export function AboutSection({
               {languages.map((language) => (
                 <li
                   key={language.name}
-                  className="rounded-full border border-pf-border-strong bg-pf-card px-3 py-1 text-sm"
+                  className="rounded-[var(--pf-chip-radius)] border border-pf-border-strong bg-pf-card px-3 py-1 text-sm"
                 >
                   {language.name}
                 </li>

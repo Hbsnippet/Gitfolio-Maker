@@ -67,7 +67,9 @@ export function ProjectList({ projects }: { projects: GithubRepository[] }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
       <div className="max-w-md">
-        <h2 className="pf-display text-4xl tracking-tight">Featured work</h2>
+        <h2 className="pf-display text-4xl tracking-tight" data-pf-marker="02 / projects">
+          Featured work
+        </h2>
         <p className="mt-3 text-sm leading-6 text-pf-muted">
           Public repositories, ordered by stars.
         </p>
@@ -75,7 +77,7 @@ export function ProjectList({ projects }: { projects: GithubRepository[] }) {
 
       {visibleProjects.length > 0 ? (
         <>
-          <div className="mt-8 grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="pf-projects-grid mt-8 grid items-stretch gap-[var(--pf-grid-gap)] md:grid-cols-2 lg:grid-cols-3">
             {visibleProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -104,7 +106,7 @@ function ProjectCard({ project }: { project: GithubRepository }) {
   const accent = accentColor(project.language, project.name);
 
   return (
-    <article className="pf-card pf-card-interactive flex h-full flex-col p-5">
+    <article className="pf-card pf-card-interactive pf-project-card flex h-full flex-col p-[var(--pf-card-pad)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           {project.owner && (
@@ -121,7 +123,7 @@ function ProjectCard({ project }: { project: GithubRepository }) {
         </div>
         <span
           aria-hidden
-          className="pf-meta flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-medium text-pf-fg"
+          className="pf-meta flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--pf-badge-radius)] text-[11px] font-medium text-pf-fg"
           style={{ backgroundColor: `${accent}2e` }}
         >
           {initials(project.name)}
@@ -136,7 +138,7 @@ function ProjectCard({ project }: { project: GithubRepository }) {
         <p className="mt-3 text-sm italic text-pf-faint">No description provided.</p>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-pf-muted">
+      <div className="pf-meta mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-pf-muted">
         {project.language && (
           <span className="inline-flex items-center gap-1.5">
             <span
