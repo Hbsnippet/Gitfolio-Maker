@@ -1,36 +1,161 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gitfolio Maker
 
-## Getting Started
+**Turn your GitHub profile into a portfolio worth sharing.**
 
-First, run the development server:
+Gitfolio Maker transforms your GitHub profile and repositories into a clean, personalized developer portfolio. Enter a GitHub username, preview the profile, and generate a dedicated portfolio page without manually building one from scratch.
+
+## ✨ Features
+
+- **Instant Profile Preview** — Enter a GitHub username to preview profile information before generating a portfolio.
+- **Automatic Portfolio Generation** — Generate a dedicated portfolio page using GitHub profile and repository data.
+- **Three Visual Themes** — Choose a style that suits you:
+  - **Editorial** — A warm, cream-colored design with an editorial feel.
+  - **Mono** — A minimal, monochromatic aesthetic.
+  - **Sketchbook** — A playful style with soft, pink-toned colors.
+- **GitHub Integration** — Fetches public profile and repository information through the GitHub API.
+- **Responsive Interface** — A polished experience across different screen sizes.
+- **Shareable Portfolio URLs** — Each generated portfolio has its own URL that you can share.
+- **Light and Dark Modes** — Switch the appearance of your generated portfolio.
+- **Modern UI** — A dreamy visual identity with subtle interactions and carefully considered typography.
+
+## 🛠️ Tech Stack
+
+- [Next.js](https://nextjs.org/) — React framework and App Router
+- [React](https://react.dev/) — UI components
+- [TypeScript](https://www.typescriptlang.org/) — Type safety
+- [Tailwind CSS](https://tailwindcss.com/) — Styling
+- [GitHub REST API](https://docs.github.com/en/rest) — Profile and repository data
+- [Bun](https://bun.sh/) — JavaScript runtime and package manager
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- [Bun](https://bun.sh/docs/installation)
+- A GitHub account
+- A GitHub personal access token for API access
+
+### Installation
+
+**1. Clone the repository**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/Hbsnippet/Gitfolio-Maker.git
+cd Gitfolio-Maker
+```
+
+**2. Install dependencies**
+
+```bash
+bun install
+```
+
+**3. Configure environment variables**
+
+Create a `.env.local` file in the project root and add the GitHub token using the environment variable name expected by the server-side GitHub integration in `lib/github.ts`.
+
+```env
+GITHUB_TOKEN=your_github_token
+```
+
+If your implementation uses a different variable name, use that exact name instead.
+
+Keep your token private. Never commit `.env.local` or expose the token through client-side code.
+
+**4. Start the development server**
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**5. Open the application**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 💡 How It Works
 
-## Learn More
+1. Enter a GitHub username.
+2. Preview the GitHub profile information.
+3. Generate a personalized portfolio.
+4. Explore the generated page and choose a visual theme.
+5. Share your portfolio URL.
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+app/
+├── api/
+│   ├── embed/
+│   └── github/
+│       └── [username]/
+├── [username]/
+│   ├── loading.tsx
+│   └── page.tsx
+├── globals.css
+├── layout.tsx
+└── page.tsx
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+components/
+└── portfolio/
+    ├── about-section.tsx
+    ├── contribution-heatmap.tsx
+    ├── language-list.tsx
+    ├── portfolio-footer.tsx
+    ├── portfolio-shell.tsx
+    ├── profile-hero.tsx
+    └── project-list.tsx
 
-## Deploy on Vercel
+lib/
+├── github.ts
+└── utils.ts
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+*The structure above highlights the main application areas; additional UI components and configuration files may exist.*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔐 Environment Variables
+
+| Variable | Purpose |
+|---|---|
+| `GITHUB_TOKEN` | Server-side GitHub API authentication, if this is the variable name configured in `lib/github.ts`. |
+
+Never expose secrets using a `NEXT_PUBLIC_` prefix. Keep environment variables configured on your deployment platform as well as locally.
+
+## 🌐 Deployment
+
+Gitfolio Maker can be deployed to [Vercel](https://vercel.com/), which supports Next.js applications.
+
+1. Import the repository into Vercel.
+2. Configure the required GitHub token as a server-side environment variable.
+3. Deploy the application.
+4. Verify that profile previews and generated portfolio pages work in production.
+
+## 🗺️ Roadmap
+
+Potential areas for future improvements:
+
+- More portfolio themes and customization options.
+- Additional portfolio sections and layout controls.
+- Improved loading, validation, and API error states.
+- Further accessibility and performance improvements.
+
+## 🤝 Contributing
+
+Contributions, ideas, and feedback are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes.
+4. Test your changes locally.
+5. Open a pull request describing your improvements.
+
+## 📄 License
+
+No license has been specified here. Add a `LICENSE` file and update this section when you choose a license.
+
+---
+
+**Built for developers who want a better way to showcase their work.**
+
+If you find Gitfolio Maker useful, consider giving the repository a ⭐ on GitHub.
