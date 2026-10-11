@@ -34,6 +34,8 @@ export default function Home() {
   function handleUsernameChange(value: string) {
     const cleanUsername = cleanGithubUsername(value);
 
+    setError(null);
+
     setUsername(value);
     setProfile((current) =>
       current &&
@@ -87,13 +89,16 @@ export default function Home() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
+  
     if (loading) return;
-
+  
     const cleanUsername = cleanGithubUsername(username);
-
-    if (!cleanUsername) return;
-
+  
+    if (!cleanUsername) {
+      setError("Please enter a GitHub username.");
+      return;
+    }
+  
     if (
       profile &&
       profile.login.toLowerCase() === cleanUsername.toLowerCase()
@@ -101,32 +106,35 @@ export default function Home() {
       router.push(`/${encodeURIComponent(cleanUsername)}`);
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
       const response = await fetch(
         `/api/github/${encodeURIComponent(cleanUsername)}`
       );
-
+  
       if (!response.ok) {
-        console.error("GitHub profile request failed", response.status);
-        setError("GitHub profile request failed");
-        setLoading(false);
+        const data = await response.json();
+        setError(data.error || "Unable to find this GitHub profile.");
+        return;
       }
-
+  
       const data: GithubProfile = await response.json();
-
-      if (!data?.login || !data?.avatar_url) return;
-
+  
+      if (!data?.login || !data?.avatar_url) {
+        setError("GitHub returned an invalid profile.");
+        return;
+      }
+  
       router.push(`/${encodeURIComponent(cleanUsername)}`);
-      setLoading(false);
     } catch (error) {
       console.error("GitHub profile request failed", error);
-      setError("GitHub profile request failed");
+      setError("Unable to connect. Please try again.");
+    } finally {
       setLoading(false);
-    } 
+    }
   }
 
   return (
