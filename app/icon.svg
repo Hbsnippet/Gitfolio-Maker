@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Gitfolio Maker favicon: dreamy blue tile with a cream geometric "g".
+       Vector so it stays crisp at 16/32 px; transparent margins outside the tile. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8cbfe8"/>
+      <stop offset="1" stop-color="#3876ba"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#sky)"/>
+
+  <g fill="none" stroke="#fdf6ec" stroke-width="6" stroke-linecap="round">
+    <!-- bowl of the g -->
+    <circle cx="31.5" cy="28" r="11.5"/>
+    <!-- stem + descender hook -->
+    <path d="M43 15v25.5a7.5 7.5 0 0 1-7.5 7.5H29"/>
+  </g>
+</svg>
