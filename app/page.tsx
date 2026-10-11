@@ -260,13 +260,14 @@ export default function Home() {
       className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-white/70"
     />
 
-    <button
-      type="submit"
-      disabled={loading || Boolean(error)}
-      className="shrink-0 rounded-lg bg-[#111318] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-black disabled:opacity-60"
-    >
-      {loading ? "..." : "Generate"}
-    </button>
+    
+<button
+  type="submit"
+  disabled={loading || Boolean(error)}
+  className="shrink-0 rounded-lg bg-[#111318] px-4 py-2.5 text-sm font-medium text-white transform transition duration-200 hover:-translate-y-1 hover:shadow-md hover:bg-black disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+>
+  {loading ? "..." : "Generate"}
+</button>
   </form>
 
   {error && (
