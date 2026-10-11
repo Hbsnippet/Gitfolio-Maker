@@ -242,6 +242,15 @@ export default function Home() {
     </button>
   </form>
 
+  {error && (
+  <p
+    role="alert"
+    className="mt-3 text-sm text-red-200"
+  >
+    {error}
+  </p>
+)}
+
   {profile && (
     <div className="mt-8 flex w-full max-w-lg items-center gap-3 rounded-xl border border-white/25 bg-white/10 p-4 text-left shadow-lg shadow-black/10 backdrop-blur-xl">
       <img
