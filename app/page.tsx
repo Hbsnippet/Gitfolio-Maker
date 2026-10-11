@@ -172,7 +172,7 @@ export default function Home() {
           </Link>
 
           <Link
-            href="https://github.com"
+            href="https://github.com/Hbsnippet/Gitfolio-Maker"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#101116]/80 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#24252d]"
