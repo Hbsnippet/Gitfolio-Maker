@@ -24,6 +24,19 @@ function cleanGithubUsername(value: string) {
   return value.trim().replace(/^@/, "");
 }
 
+function errorMessageForStatus(status: number) {
+  switch (status) {
+    case 400:
+      return "That doesn't look like a valid GitHub username. Use letters, numbers, and hyphens (up to 39 characters).";
+    case 404:
+      return "GitHub user not found. Check the username and try again.";
+    case 429:
+      return "GitHub rate limit exceeded. Please try again in a little while.";
+    default:
+      return "Something went wrong contacting GitHub. Please try again.";
+  }
+}
+
 export default function Home() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -48,49 +61,56 @@ export default function Home() {
 
   useEffect(() => {
     const cleanUsername = cleanGithubUsername(username);
-
+  
     if (!cleanUsername) return;
-
+  
+    // Already previewing this exact profile - skip a duplicate request.
+    if (profile && profile.login.toLowerCase() === cleanUsername.toLowerCase()) {
+      return;
+    }
+  
     const controller = new AbortController();
-
+  
     const timeout = window.setTimeout(async () => {
       try {
         const response = await fetch(
           `/api/github/${encodeURIComponent(cleanUsername)}`,
           { signal: controller.signal }
         );
-
+  
+        if (controller.signal.aborted) return;
+  
         if (!response.ok) {
-          console.error("GitHub profile preview failed", response.status);
+          setError(errorMessageForStatus(response.status));
           return;
         }
-
+  
         const data: GithubProfile = await response.json();
-
-        if (controller.signal.aborted) return;
-
+  
         if (data?.login && data?.avatar_url) {
+          setError(null);
           setProfile(data);
         }
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
           return;
         }
-
-        console.error("Gi1tHub profile preview failed", error);
+  
+        setError("Unable to connect. Please try again.");
+        console.error("GitHub profile preview failed", error);
       }
-    }, 450);
-
+    }, 500);
+  
     return () => {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [username]);
+  }, [username, profile]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
   
-    if (loading) return;
+    if (loading || error) return;
   
     const cleanUsername = cleanGithubUsername(username);
   
@@ -116,8 +136,7 @@ export default function Home() {
       );
   
       if (!response.ok) {
-        const data = await response.json();
-        setError(data.error || "Unable to find this GitHub profile.");
+        setError(errorMessageForStatus(response.status));
         return;
       }
   
@@ -243,7 +262,7 @@ export default function Home() {
 
     <button
       type="submit"
-      disabled={loading}
+      disabled={loading || Boolean(error)}
       className="shrink-0 rounded-lg bg-[#111318] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-black disabled:opacity-60"
     >
       {loading ? "..." : "Generate"}
@@ -251,13 +270,13 @@ export default function Home() {
   </form>
 
   {error && (
-  <p
-    role="alert"
-    className="mt-3 text-sm text-red-200"
-  >
-    {error}
-  </p>
-)}
+    <div
+      role="alert"
+      className="mt-3 w-full max-w-lg rounded-lg border border-red-400/30 bg-[#101116]/80 px-4 py-2.5 text-left text-sm leading-5 text-red-200 shadow-lg shadow-black/10 backdrop-blur-xl"
+    >
+      {error}
+    </div>
+  )}
 
   {profile && (
     <div className="mt-8 flex w-full max-w-lg items-center gap-3 rounded-xl border border-white/25 bg-white/10 p-4 text-left shadow-lg shadow-black/10 backdrop-blur-xl">
