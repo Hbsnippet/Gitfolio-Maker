@@ -52,6 +52,12 @@
   --color-pf-on-accent: var(--pf-on-accent);
   --color-pf-track: var(--pf-track);
   --color-pf-bar: var(--pf-bar);
+  --color-home-bg: var(--home-bg);
+  --color-home-surface: var(--home-surface);
+  --color-home-ink: var(--home-ink);
+  --color-home-muted: var(--home-muted);
+  --color-home-line: var(--home-line);
+  --color-home-accent: var(--home-accent);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -150,6 +156,14 @@
   --pf-chip-radius: 999px;
   --pf-badge-radius: 999px;
   --pf-cell-radius: 3px;
+
+
+  --home-bg: #f5f0e6;        /* warm cream page background            */
+  --home-surface: #fbf8f2;   /* cards / preview panel                 */
+  --home-ink: #211d18;       /* near-black text & monospace headings  */
+  --home-muted: #6f6659;     /* secondary text, eyebrows              */
+  --home-line: #e4ddd0;      /* hairline borders & dividers           */
+  --home-accent: #2f5fd0;    /* restrained blue accent                */
 
   /* Editorial — light */
   --pf-bg: #f5f0e6;

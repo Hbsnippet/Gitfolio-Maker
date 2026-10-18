@@ -7,7 +7,7 @@ export const PORTFOLIO_PRESETS = [
 export type PortfolioPreset = (typeof PORTFOLIO_PRESETS)[number];
 export type PortfolioMode = "light" | "dark";
 
-export const DEFAULT_PRESET: PortfolioPreset = "editorial";
+export const DEFAULT_PRESET: PortfolioPreset = "mono";
 export const DEFAULT_MODE: PortfolioMode = "light";
 
 export const PF_THEME_KEY = "gitfolio:portfolio-theme";
