@@ -1,5 +1,8 @@
+// "ledger" replaced the old "editorial" preset. It is the base theme, so a
+// stale saved "editorial" value simply falls back to DEFAULT_PRESET instead of
+// leaving the portfolio unstyled.
 export const PORTFOLIO_PRESETS = [
-  "editorial",
+  "ledger",
   "mono",
   "sketchbook",
 ] as const;
@@ -18,10 +21,10 @@ export const PRESET_META: Record<
   PortfolioPreset,
   { label: string; description: string; swatch: string }
 > = {
-  editorial: {
-    label: "Editorial",
-    description: "Warm & refined",
-    swatch: "linear-gradient(135deg, #FBF8F2 0%, #C78368 100%)",
+  ledger: {
+    label: "Ledger",
+    description: "Warm & typographic",
+    swatch: "linear-gradient(135deg, #FBF8F2 0%, #2F5FD0 100%)",
   },
   mono: {
     label: "Mono",

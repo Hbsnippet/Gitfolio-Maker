@@ -53,11 +53,13 @@
   --color-pf-track: var(--pf-track);
   --color-pf-bar: var(--pf-bar);
   --color-home-bg: var(--home-bg);
-  --color-home-surface: var(--home-surface);
+  --color-home-alt: var(--home-alt);
+  --color-home-card: var(--home-card);
   --color-home-ink: var(--home-ink);
-  --color-home-muted: var(--home-muted);
-  --color-home-line: var(--home-line);
-  --color-home-accent: var(--home-accent);
+  --color-home-soft: var(--home-soft);
+  --color-home-faint: var(--home-faint);
+  --color-home-hi: var(--home-hi);
+  --color-home-pen: var(--home-pen);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -136,79 +138,92 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Portfolio visual presets — Editorial (default), Mono, Sketchbook. Resolved
+/* Portfolio visual presets — Ledger (default), Mono, Sketchbook. Resolved
    from data attributes on <html> so one client control can retheme the whole
    generated portfolio without refetching. Each preset maps to a coherent
    light + dark appearance plus its own type and shape language. */
 :root {
-  /* Type + shape language (Editorial defaults) */
+  /* Type + shape language (Ledger defaults) */
   --pf-font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --pf-font-display: var(--font-fraunces), ui-serif, Georgia, serif;
-  --pf-font-meta: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --pf-display-variation: "SOFT" 0, "WONK" 0, "opsz" 120;
-  --pf-radius-card: 1.25rem;
-  --pf-radius-pill: 999px;
+  --pf-font-display: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --pf-font-meta: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --pf-display-variation: normal;
+  --pf-radius-card: 1rem;
+  --pf-radius-pill: 0.75rem;
   --pf-card-border-w: 1px;
-  --pf-card-shadow: 0 1px 2px rgba(64, 54, 46, 0.04), 0 10px 30px rgba(64, 54, 46, 0.05);
-  --pf-card-shadow-hover: 0 2px 6px rgba(64, 54, 46, 0.06), 0 18px 40px rgba(64, 54, 46, 0.09);
-  --pf-card-pad: 1.25rem;
-  --pf-grid-gap: 1.25rem;
+  --pf-card-shadow: 0 1px 2px rgba(33, 29, 24, 0.04), 0 18px 40px -28px rgba(33, 29, 24, 0.3);
+  --pf-card-shadow-hover: 0 2px 4px rgba(33, 29, 24, 0.05), 0 28px 55px -30px rgba(33, 29, 24, 0.38);
+  --pf-card-pad: 1.5rem;
+  --pf-grid-gap: 1.5rem;
   --pf-chip-radius: 999px;
-  --pf-badge-radius: 999px;
+  --pf-badge-radius: 0.625rem;
   --pf-cell-radius: 3px;
 
 
-  --home-bg: #f5f0e6;        /* warm cream page background            */
-  --home-surface: #fbf8f2;   /* cards / preview panel                 */
-  --home-ink: #211d18;       /* near-black text & monospace headings  */
-  --home-muted: #6f6659;     /* secondary text, eyebrows              */
-  --home-line: #e4ddd0;      /* hairline borders & dividers           */
-  --home-accent: #2f5fd0;    /* restrained blue accent                */
+  /* Homepage — "doodle": warm paper, blue ink, highlighter yellow, plus the
+     two wobbly border-radius shorthands the hand-drawn outlines use. Light
+     only by design; the homepage never has a dark variant. */
+  --home-bg: #fbf8f1;                    /* page paper                    */
+  --home-alt: #f4efe3;                   /* tinted "how it works" band    */
+  --home-card: #fffdf8;                  /* cards & the preview sticker   */
+  --home-ink: #1d1b18;                   /* text and the drawn outlines   */
+  --home-soft: #6b665d;                  /* secondary text, dashed rules  */
+  --home-faint: rgba(29, 27, 24, 0.14);  /* hairline borders             */
+  --home-hi: #ffe27a;                    /* highlighter & tape yellow     */
+  --home-pen: #2f4bd8;                   /* the blue pen accent           */
+  --home-err: #a8321f;                   /* validation text               */
+  --home-err-soft: #fdeae4;              /* validation panel              */
+  --home-wob: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  --home-wob-2: 18px 225px 18px 255px / 255px 18px 225px 18px;
+  --home-font-body: var(--font-inter), system-ui, sans-serif;
+  --home-font-hand: var(--font-caveat), "Comic Sans MS", cursive;
 
-  /* Editorial — light */
+  /* Ledger — light: warm cream paper, ink text, one blue accent. Mirrors the
+     marketing site's homepage palette. */
   --pf-bg: #f5f0e6;
   --pf-aura: none;
   --pf-card: #fbf8f2;
-  --pf-card-soft: #fffcf8;
-  --pf-fg: #40362e;
-  --pf-muted: #8a7b6e;
-  --pf-faint: #a6ad91;
+  --pf-card-soft: #fffdf9;
+  --pf-fg: #211d18;
+  --pf-muted: #6f6659;
+  --pf-faint: #9a9082;
   --pf-border: #e4ddd0;
-  --pf-border-strong: #d9d3c6;
-  --pf-accent: #c78368;
-  --pf-accent-hover: #b57258;
-  --pf-on-accent: #f5f0e6;
-  --pf-track: #e7e1d4;
-  --pf-bar: #a6ad91;
-  --pf-heat-0: #e7e1d4;
-  --pf-heat-1: #d5dcc8;
-  --pf-heat-2: #a6ad91;
-  --pf-heat-3: #c78368;
-  --pf-heat-4: #8f5a45;
+  --pf-border-strong: #d2c9ba;
+  --pf-accent: #2f5fd0;
+  --pf-accent-hover: #2851b8;
+  --pf-on-accent: #ffffff;
+  --pf-track: #e7e0d2;
+  --pf-bar: #2f5fd0;
+  --pf-heat-0: #e7e0d2;
+  --pf-heat-1: #cfdaf6;
+  --pf-heat-2: #9db2ea;
+  --pf-heat-3: #5a7fdd;
+  --pf-heat-4: #2f5fd0;
 }
 
 :root[data-pf-mode="dark"] {
-  --pf-bg: #221c17;
+  /* Ledger — dark: deep blue-charcoal that keeps the same blue accent. */
+  --pf-bg: #14161d;
   --pf-aura: none;
-  --pf-card: #2a231d;
-  --pf-card-soft: #302822;
-  --pf-fg: #f0e9dd;
-  --pf-muted: #b7a99a;
-  --pf-faint: #9ba383;
-  --pf-border: #3a3129;
-  --pf-border-strong: #4a4036;
-  --pf-accent: #d29379;
-  --pf-accent-hover: #c78368;
-  --pf-on-accent: #221c17;
-  --pf-track: #3a3129;
-  --pf-bar: #9ba383;
-  --pf-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.25);
-  --pf-card-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.4), 0 18px 40px rgba(0, 0, 0, 0.35);
-  --pf-heat-0: #3a3129;
-  --pf-heat-1: #4e5540;
-  --pf-heat-2: #9ba383;
-  --pf-heat-3: #d29379;
-  --pf-heat-4: #e0b09a;
+  --pf-card: #1b1e26;
+  --pf-card-soft: #23272f;
+  --pf-fg: #f2ede3;
+  --pf-muted: #a9a396;
+  --pf-faint: #7e7a70;
+  --pf-border: #2b2f3a;
+  --pf-border-strong: #3c4250;
+  --pf-accent: #7fa0ff;
+  --pf-accent-hover: #98b3ff;
+  --pf-on-accent: #14161d;
+  --pf-track: #2b2f3a;
+  --pf-bar: #7fa0ff;
+  --pf-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 18px 40px -28px rgba(0, 0, 0, 0.55);
+  --pf-card-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.45), 0 28px 55px -30px rgba(0, 0, 0, 0.65);
+  --pf-heat-0: #262a34;
+  --pf-heat-1: #33406b;
+  --pf-heat-2: #4a63b8;
+  --pf-heat-3: #7fa0ff;
+  --pf-heat-4: #b7c9ff;
 }
 
 :root[data-pf-theme="mono"] {
@@ -497,6 +512,28 @@
   :root[data-pf-theme="sketchbook"] h3.pf-display {
     font-style: italic;
   }
+
+  /* Ledger — editorial-lab layer. Ledger is the base theme, so these rules are
+     guarded with :not() rather than a data-pf-theme check: they apply whenever
+     Mono or Sketchbook are not active, exactly matching where the Ledger
+     palette in :root applies. Section markers become the same small blue
+     uppercase eyebrow the marketing site uses, and project cards grow a thin
+     blue top edge on hover instead of bouncing. */
+  :root:not([data-pf-theme="mono"]):not([data-pf-theme="sketchbook"]) [data-pf-marker]::before {
+    content: attr(data-pf-marker);
+    display: block;
+    font-family: var(--pf-font-meta);
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--pf-accent);
+    margin-bottom: 0.75rem;
+  }
+  :root:not([data-pf-theme="mono"]):not([data-pf-theme="sketchbook"]) .pf-project-card:hover {
+    border-color: var(--pf-border-strong);
+    box-shadow: var(--pf-card-shadow-hover),
+      inset 0 2px 0 0 var(--pf-accent);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -512,6 +549,668 @@
   }
 }
 
+/* ------------------------------------------------------------------
+   Homepage surface system
+   The marketing page has its own light-only palette (--home-*) and its own
+   home-* classes, so it can never be rethemed by the portfolio boot script
+   and vice versa. The look is a doodle on warm paper: blue ink outlines at
+   1.8px, wobbly border radii, flat offset shadows, and Caveat for anything
+   handwritten. Source of truth: design/gitfolio-doodle.html.
+   ------------------------------------------------------------------ */
+@layer components {
+  /* Root: paper, ink, Inter for prose, Caveat for the handwritten bits.
+     `color-scheme: light` keeps native controls light for visitors whose OS
+     is in dark mode — the homepage is deliberately light only. */
+  .home {
+    color-scheme: light;
+    background: var(--home-bg);
+    color: var(--home-ink);
+    font-family: var(--home-font-body);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .home-hand {
+    font-family: var(--home-font-hand);
+    font-weight: 700;
+  }
+
+  .home-wrap {
+    max-width: 1104px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Focus rings are drawn in the same blue pen as everything else. */
+  .home a:focus-visible,
+  .home button:focus-visible,
+  .home-form:focus-within {
+    outline: 2px dashed var(--home-pen);
+    outline-offset: 3px;
+  }
+
+  /* ---------- Nav ---------- */
+  .home-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--home-bg);
+    border-bottom: 1.5px solid var(--home-faint);
+  }
+
+  .home-nav .home-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 65px;
+  }
+
+  .home-logo {
+    position: relative;
+    display: inline-block;
+    color: var(--home-ink);
+    font-family: var(--home-font-hand);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .home-logo svg {
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 8px;
+    color: var(--home-pen);
+  }
+
+  .home-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    font-size: 15px;
+  }
+
+  .home-links a {
+    color: var(--home-soft);
+    text-decoration: none;
+  }
+
+  .home-links a:hover {
+    color: var(--home-ink);
+  }
+
+  /* The nav links stay text-sized in the design, so their tap target comes
+     from a transparent min-height rather than padding: the gap between them
+     is untouched. The "GitHub" pill keeps its own drawn size. */
+  .home-links a:not(.home-gh) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .home-gh {
+    padding: 6px 18px;
+    background: var(--home-card);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob);
+    box-shadow: 3px 3px 0 var(--home-ink);
+    white-space: nowrap;
+  }
+
+  /* Beats the `.home-links a` colour above, which is the muted link colour. */
+  .home-links .home-gh {
+    color: var(--home-ink);
+  }
+
+  /* ---------- Hero ---------- */
+  .home-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    min-height: calc(100svh - 66px);
+    padding: 56px 0;
+    scroll-margin-top: 96px;
+  }
+
+  .home-eyebrow {
+    display: inline-block;
+    margin: 0 0 6px;
+    color: var(--home-pen);
+    font-size: 26px;
+    transform: rotate(-1.5deg);
+  }
+
+  .home-h1 {
+    margin: 0 0 28px;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  }
+
+  .home-mark {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .home-mark svg {
+    position: absolute;
+    left: -2%;
+    bottom: -14px;
+    width: 104%;
+    height: 16px;
+    overflow: visible;
+    color: var(--home-pen);
+  }
+
+  .home-lead {
+    max-width: 29em;
+    margin: 0 0 40px;
+    color: var(--home-soft);
+    font-size: 18px;
+  }
+
+  .home-form {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    max-width: 470px;
+    padding: 8px;
+    background: var(--home-card);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob);
+    box-shadow: 4px 4px 0 var(--home-ink);
+  }
+
+  .home-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    background: none;
+    border: 0;
+    color: var(--home-ink);
+    font: inherit;
+    outline: none;
+  }
+
+  .home-form input::placeholder {
+    color: var(--home-soft);
+    opacity: 0.8;
+  }
+
+  .home-form button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: var(--home-hi);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob-2);
+    color: var(--home-ink);
+    font-family: var(--home-font-body);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: normal;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .home-form button[type="submit"]:hover:not(:disabled) {
+    transform: translate(-1px, -1px) rotate(-1deg);
+  }
+
+  .home-form button[type="submit"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* The handwritten "type it here!" label, pinned above the input. */
+  .home-note {
+    position: absolute;
+    right: 6px;
+    top: -40px;
+    color: var(--home-pen);
+    font-size: 24px;
+    transform: rotate(3deg);
+    pointer-events: none;
+  }
+
+  .home-note svg {
+    position: absolute;
+    right: 30px;
+    top: 100%;
+    width: 38px;
+    height: 30px;
+    overflow: visible;
+  }
+
+  .home-try {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 20px;
+    color: var(--home-soft);
+    font-size: 14px;
+  }
+
+  .home-try button {
+    padding: 2px 0;
+    background: none;
+    border: 0;
+    border-bottom: 1.5px dashed var(--home-soft);
+    color: var(--home-ink);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .home-try button:hover {
+    color: var(--home-pen);
+  }
+
+  /* Validation, drawn like everything else: ink outline, flat shadow and a
+     warm off-white wash, so it reads as an error without shouting. */
+  .home-error {
+    max-width: 470px;
+    margin-top: 20px;
+    padding: 10px 16px;
+    background: var(--home-err-soft);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob-2);
+    box-shadow: 3px 3px 0 var(--home-ink);
+    color: var(--home-err);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ---------- Preview sticker ---------- */
+  .home-stage {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 24px;
+  }
+
+  .home-sticker {
+    position: relative;
+    width: 100%;
+    max-width: 310px;
+    padding: 24px 22px 18px;
+    background: var(--home-card);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob-2);
+    box-shadow: 5px 5px 0 var(--home-ink);
+    transform: rotate(2.2deg);
+    transition: transform 0.3s;
+  }
+
+  .home-sticker:hover {
+    transform: rotate(0);
+  }
+
+  .home-tape {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    width: 84px;
+    height: 24px;
+    margin-left: -42px;
+    background: var(--home-hi);
+    border-radius: 2px;
+    opacity: 0.9;
+    transform: rotate(-4deg);
+  }
+
+  .home-who {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .home-av {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: var(--home-hi);
+    border: 1.8px solid var(--home-ink);
+    border-radius: 50%;
+    font-size: 24px;
+  }
+
+  .home-who b {
+    display: block;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .home-who span {
+    color: var(--home-soft);
+    font-size: 13px;
+  }
+
+  .home-stats {
+    display: flex;
+    gap: 20px;
+    margin: 16px 0 12px;
+    padding: 12px 0;
+    border-top: 1.5px dashed var(--home-soft);
+    border-bottom: 1.5px dashed var(--home-soft);
+  }
+
+  .home-stats div {
+    color: var(--home-soft);
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .home-stats strong {
+    display: block;
+    color: var(--home-ink);
+    font-family: var(--home-font-hand);
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .home-repo {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 14px;
+  }
+
+  .home-repo i {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    color: var(--home-soft);
+    font-size: 12px;
+    font-style: normal;
+  }
+
+  .home-repo i::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c);
+  }
+
+  /* Handwritten annotation in the corner: "sample ✦" before a profile is
+     loaded, and a link into the real portfolio afterwards. */
+  .home-tag {
+    position: absolute;
+    right: -12px;
+    bottom: -24px;
+    color: var(--home-pen);
+    font-size: 22px;
+    transform: rotate(-6deg);
+  }
+
+  a.home-tag {
+    text-decoration: none;
+  }
+
+  a.home-tag:hover {
+    text-decoration: underline;
+    text-decoration-style: wavy;
+  }
+
+  /* ---------- Sections ---------- */
+  .home-section {
+    padding: 112px 0;
+    scroll-margin-top: 80px;
+  }
+
+  /* Sits closer to the Features block above it than to the footer below. */
+  .home-section-about {
+    padding-top: 40px;
+  }
+
+  .home-alt {
+    background: var(--home-alt);
+  }
+
+  .home-sec-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+    color: var(--home-pen);
+    font-size: 24px;
+  }
+
+  .home-sec-label::after {
+    content: "";
+    flex: 1;
+    border-top: 1.5px dashed var(--home-faint);
+  }
+
+  .home-h2 {
+    margin: 0 0 56px;
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .home-hl {
+    padding: 0 4px;
+    background: linear-gradient(transparent 58%, var(--home-hi) 58%);
+  }
+
+  .home-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+
+  .home-col {
+    position: relative;
+    padding-top: 32px;
+    border-top: 1.5px dashed var(--home-soft);
+  }
+
+  .home-col h3 {
+    margin: 0 0 8px;
+    /* Tailwind's preflight resets heading weight, so state it: the design
+       relies on the browser's bold default here. */
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .home-col p {
+    margin: 0;
+    color: var(--home-soft);
+    font-size: 15px;
+  }
+
+  .home-num {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 18px;
+    background: var(--home-card);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob);
+    font-size: 32px;
+  }
+
+  .home-arr {
+    position: absolute;
+    top: 36px;
+    right: -40px;
+    width: 46px;
+    height: 26px;
+    overflow: visible;
+    color: var(--home-soft);
+  }
+
+  /* ---------- About panel ---------- */
+  .home-about {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 56px;
+    padding: 56px;
+    background: var(--home-card);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob-2);
+    box-shadow: 6px 6px 0 var(--home-ink);
+    transform: rotate(-0.5deg);
+  }
+
+  .home-about h2 {
+    margin: 0;
+  }
+
+  .home-about p {
+    margin: 0 0 16px;
+    color: var(--home-soft);
+  }
+
+  .home-about hr {
+    margin: 28px 0 18px;
+    border: 0;
+    border-top: 1.5px dashed var(--home-soft);
+  }
+
+  .home-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .home-chips span {
+    padding: 0 16px;
+    background: var(--home-bg);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob);
+    color: var(--home-pen);
+    font-size: 20px;
+  }
+
+  /* ---------- Footer ---------- */
+  .home-footer {
+    padding: 64px 0 36px;
+    border-top: 1.5px solid var(--home-faint);
+  }
+
+  .home-footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .home-footer p {
+    max-width: 18em;
+    margin: 10px 0 0;
+    color: var(--home-soft);
+  }
+
+  .home-footer .home-links {
+    gap: 28px;
+    align-self: flex-start;
+    padding-top: 8px;
+  }
+
+  .home-fine {
+    margin-top: 56px;
+    color: var(--home-soft);
+    font-size: 13px;
+  }
+
+  /* ---------- Floating "back to top" ---------- */
+  .home-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    background: var(--home-card);
+    border: 1.8px solid var(--home-ink);
+    border-radius: var(--home-wob-2);
+    box-shadow: 3px 3px 0 var(--home-ink);
+    color: var(--home-ink);
+    transition:
+      transform 0.15s,
+      background-color 0.15s;
+  }
+
+  .home-top:hover {
+    background: var(--home-hi);
+    transform: translate(-1px, -1px);
+  }
+
+  /* ---------- Narrow screens ---------- */
+  @media (max-width: 860px) {
+    /* `minmax(0, 1fr)` rather than `1fr`: the generator form's intrinsic
+       width (an <input> is ~20 characters wide) would otherwise push the
+       single column past the viewport on narrow phones and clip the
+       Generate button. */
+    .home-hero {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 56px;
+      min-height: 0;
+      padding-bottom: 80px;
+    }
+
+    .home-stage {
+      justify-content: center;
+      padding: 0 14px 24px;
+    }
+
+    .home-cols,
+    .home-about {
+      grid-template-columns: 1fr;
+    }
+
+    .home-about {
+      padding: 32px;
+    }
+
+    .home-section {
+      padding: 80px 0;
+    }
+
+    /* Declared after .home-section so the top padding survives it. */
+    .home-section-about {
+      padding-top: 40px;
+    }
+
+    .home-arr {
+      display: none;
+    }
+
+    .home-links a:not(.home-gh) {
+      display: none;
+    }
+
+    .home-note {
+      display: none;
+    }
+  }
+
+  /* Motion only where it earns its place, and never for visitors who asked
+     for less of it. */
+  @media (prefers-reduced-motion: reduce) {
+    .home-sticker,
+    .home-form button[type="submit"],
+    .home-top {
+      transition: none;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -521,5 +1220,12 @@
   }
   html {
     @apply font-sans;
+  }
+  /* Anchor navigation (nav links, "back to top") scrolls smoothly — but only
+     for visitors who have not asked for reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 }

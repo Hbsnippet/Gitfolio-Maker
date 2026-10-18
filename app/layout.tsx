@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Caveat, Fraunces, Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+
+// The marketing homepage's type: Inter for prose, Caveat for the handwritten
+// notes, step numbers and section labels. Kept separate from the portfolio
+// presets' Geist/Fraunces so neither theme can drift into the other.
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +28,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Display serif for the portfolio's Editorial + Sketchbook presets. The SOFT/WONK
-// axes let both presets share one performant family while looking distinct.
-// Italic is loaded for Sketchbook's journal-style headings and annotations.
+// Display serif for the portfolio's Sketchbook preset. The SOFT/WONK axes let
+// one performant family cover every heading it needs, and italic is loaded for
+// its journal-style headings and annotations.
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
@@ -36,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${inter.variable} ${caveat.variable} ${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">

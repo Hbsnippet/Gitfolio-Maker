@@ -159,7 +159,12 @@ export function PortfolioControls() {
           <div
             role="menu"
             aria-label="Visual theme"
-            className="absolute right-0 z-20 mt-2 w-60 origin-top-right animate-in fade-in-0 zoom-in-95 overflow-hidden rounded-xl border border-pf-border bg-pf-card p-1 shadow-xl shadow-black/5"
+            // Below `sm` the toolbar wraps and the trigger can sit hard against
+            // the left edge, so the menu opens rightwards from the trigger and
+            // is capped to the viewport — a right-anchored fixed width would
+            // run off the left of the screen on phones. From `sm` up the
+            // trigger is on the right, where the original anchoring still fits.
+            className="absolute left-0 z-20 mt-2 w-[min(280px,calc(100vw_-_48px))] max-w-[calc(100vw_-_48px)] origin-top-left animate-in fade-in-0 zoom-in-95 overflow-hidden rounded-xl border border-pf-border bg-pf-card p-1 shadow-xl shadow-black/5 sm:left-auto sm:right-0 sm:w-60 sm:max-w-none sm:origin-top-right"
           >
             {PORTFOLIO_PRESETS.map((id, index) => {
               const meta = PRESET_META[id];
@@ -184,10 +189,10 @@ export function PortfolioControls() {
                     style={{ background: meta.swatch }}
                   />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm text-pf-fg">
+                    <span className="block whitespace-normal text-sm text-pf-fg">
                       {meta.label}
                     </span>
-                    <span className="block truncate text-xs text-pf-muted">
+                    <span className="block whitespace-normal text-xs text-pf-muted">
                       {meta.description}
                     </span>
                   </span>
