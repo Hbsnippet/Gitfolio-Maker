@@ -51,7 +51,7 @@ function errorMessageForStatus(status: number) {
 
 // Content for the marketing sections. Keeping the copy in small arrays lets the
 // JSX below stay a plain, readable map instead of three near-identical blocks.
-const EXAMPLE_USERNAMES = ["torvalds", "gaearon", "sindresorhus"];
+const EXAMPLE_USERNAMES = ["torvalds", "Sarthak-sama", "sindresorhus"];
 
 const NAV_LINKS = [
   { href: "#how-it-works", label: "How it works" },
