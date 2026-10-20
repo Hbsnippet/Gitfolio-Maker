@@ -706,18 +706,15 @@
     color: var(--home-pen);
   }
 
-  .home-lead {
-    max-width: 29em;
-    margin: 0 0 40px;
-    color: var(--home-soft);
-    font-size: 18px;
-  }
-
+  /* The paragraph that used to sit above the form is gone; the form keeps a
+     deliberate gap of its own so the handwritten note above it still has room
+     and the heading underline gets some air. */
   .home-form {
     position: relative;
     display: flex;
     gap: 8px;
     max-width: 470px;
+    margin-top: 56px;
     padding: 8px;
     background: var(--home-card);
     border: 1.8px solid var(--home-ink);
@@ -837,35 +834,48 @@
     position: relative;
     width: 100%;
     max-width: 310px;
-    padding: 24px 22px 18px;
+    padding: 26px 24px 22px;
     background: var(--home-card);
     border: 1.8px solid var(--home-ink);
-    border-radius: var(--home-wob-2);
+    /* A gentler wobble than --home-wob-2: still hand-drawn, but the card no
+       longer reads as a knocked-over shape. */
+    border-radius: 18px 12px 20px 14px / 14px 20px 12px 18px;
     box-shadow: 5px 5px 0 var(--home-ink);
-    transform: rotate(2.2deg);
+    /* Just enough tilt to look taped on, not enough to unbalance the column. */
+    transform: rotate(0.6deg);
     transition: transform 0.3s;
   }
 
   .home-sticker:hover {
-    transform: rotate(0);
+    transform: translateY(-2px) rotate(0);
+  }
+
+  /* Once a profile is loaded the card itself is the link into that portfolio:
+     block-level so the width and padding behave like the plain div, and no
+     link underline or colour change. Focus rings come from `.home a`. */
+  a.home-sticker {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
   }
 
   .home-tape {
     position: absolute;
-    top: -13px;
+    top: -12px;
     left: 50%;
-    width: 84px;
-    height: 24px;
-    margin-left: -42px;
+    width: 86px;
+    height: 22px;
+    margin-left: -43px;
     background: var(--home-hi);
     border-radius: 2px;
     opacity: 0.9;
-    transform: rotate(-4deg);
+    transform: rotate(-3deg);
   }
 
   .home-who {
     display: flex;
-    gap: 12px;
+    gap: 13px;
     align-items: center;
   }
 
@@ -884,27 +894,34 @@
   .home-who b {
     display: block;
     font-size: 16px;
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
+  /* No `display` here: the bio relies on Tailwind's `line-clamp-2`, which sets
+     its own `-webkit-box` display and would lose to a more specific rule. */
   .home-who span {
     color: var(--home-soft);
     font-size: 13px;
+    line-height: 1.45;
   }
 
+  /* Followers and repositories: two equal columns so the numbers and their
+     labels share a baseline and a rhythm at any text length. */
   .home-stats {
-    display: flex;
-    gap: 20px;
-    margin: 16px 0 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 18px 0 0;
     padding: 12px 0;
     border-top: 1.5px dashed var(--home-soft);
     border-bottom: 1.5px dashed var(--home-soft);
   }
 
   .home-stats div {
+    min-width: 0;
     color: var(--home-soft);
     font-size: 12px;
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
   .home-stats strong {
@@ -913,52 +930,40 @@
     font-family: var(--home-font-hand);
     font-size: 22px;
     font-weight: 700;
+    line-height: 1.1;
   }
 
-  .home-repo {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 5px 0;
-    font-size: 14px;
+  /* Location and company, when GitHub has them: one icon column and one text
+     column, each row a single ellipsised line so long values stay inside. */
+  .home-meta {
+    display: grid;
+    gap: 6px;
+    margin-top: 14px;
   }
 
-  .home-repo i {
+  .home-meta > span {
     display: flex;
     align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
+    gap: 8px;
+    min-width: 0;
     color: var(--home-soft);
-    font-size: 12px;
-    font-style: normal;
+    font-size: 13px;
+    line-height: 1.45;
   }
 
-  .home-repo i::before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--c);
+  .home-meta > span > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  /* Handwritten annotation in the corner: "sample ✦" before a profile is
-     loaded, and a link into the real portfolio afterwards. */
-  .home-tag {
-    position: absolute;
-    right: -12px;
-    bottom: -24px;
+  .home-meta svg {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    overflow: visible;
     color: var(--home-pen);
-    font-size: 22px;
-    transform: rotate(-6deg);
-  }
-
-  a.home-tag {
-    text-decoration: none;
-  }
-
-  a.home-tag:hover {
-    text-decoration: underline;
-    text-decoration-style: wavy;
   }
 
   /* ---------- Sections ---------- */
@@ -1197,6 +1202,11 @@
 
     .home-note {
       display: none;
+    }
+
+    /* The handwritten note is hidden here, so the form can sit a little closer. */
+    .home-form {
+      margin-top: 40px;
     }
   }
 

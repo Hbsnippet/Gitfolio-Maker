@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Building2, MapPin } from "lucide-react";
 import {
   useEffect,
   useState,
-  type CSSProperties,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -21,15 +20,6 @@ type GithubProfile = {
   followers: number;
   location: string | null;
   company: string | null;
-};
-
-type GithubRepo = {
-  id: number;
-  name: string;
-  description: string | null;
-  html_url: string;
-  language: string | null;
-  stargazers_count: number;
 };
 
 function cleanGithubUsername(value: string) {
@@ -91,53 +81,15 @@ const FEATURES = [
 
 const ABOUT_CHIPS = ["no signup", "public data only", "open source"];
 
-// Stand-in data for the preview sticker before anything has been fetched. It is
-// clearly labelled as a sample on the card itself and hidden from assistive
-// technology, so it can never be mistaken for a real account.
+
 const SAMPLE_STICKER = {
-  name: "ada-codes",
-  tagline: "Builds small useful things",
+  login: "ada-codes",
+  bio: "Builds small useful things",
   stats: [
     { value: "128", label: "followers" },
     { value: "24", label: "repositories" },
-    { value: "5", label: "languages" },
-  ],
-  repos: [
-    { name: "tiny-router", language: "TypeScript", color: "#3178c6" },
-    { name: "pixel-notes", language: "JavaScript", color: "#e8b931" },
-    { name: "dotfiles", language: "Shell", color: "#89e051" },
   ],
 };
-
-// The little colour dot beside each repository's language. Only the common
-// languages are listed; anything else falls back to the muted ink so the dot
-// never disappears.
-const LANGUAGE_COLORS: Record<string, string> = {
-  TypeScript: "#3178c6",
-  JavaScript: "#e8b931",
-  Python: "#3572a5",
-  Shell: "#89e051",
-  Go: "#00add8",
-  Rust: "#dea584",
-  Java: "#b07219",
-  Kotlin: "#a97bff",
-  Swift: "#f05138",
-  Ruby: "#701516",
-  PHP: "#4f5d95",
-  "C++": "#f34b7d",
-  "C#": "#178600",
-  C: "#8f8f8f",
-  HTML: "#e34c26",
-  CSS: "#563d7c",
-  Vue: "#41b883",
-  Dart: "#00b4ab",
-  Elixir: "#6e4a7e",
-  Scala: "#c22d40",
-  Lua: "#000080",
-  "Jupyter Notebook": "#da5b0b",
-};
-
-const FALLBACK_LANGUAGE_COLOR = "var(--home-soft)";
 
 // The design's stat labels are plural; a real account can have exactly one.
 function statLabel(count: number | null, one: string, many: string) {
@@ -151,12 +103,6 @@ export default function Home() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [profile, setProfile] = useState<GithubProfile | null>(null);
-  // Repos are stored next to the login they belong to, so a stale response can
-  // never be shown against a newer profile.
-  const [repoPreview, setRepoPreview] = useState<{
-    login: string;
-    repos: GithubRepo[];
-  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -224,40 +170,6 @@ export default function Home() {
     };
   }, [username, profile]);
 
-  // A second, independent request that fills the preview with the three most
-  // relevant repositories. It reuses the existing /repos route and the same
-  // abort pattern, and failures are ignored because repos are optional here.
-  useEffect(() => {
-    if (!profile) return;
-
-    const login = profile.login;
-    const controller = new AbortController();
-
-    const loadRepos = async () => {
-      try {
-        const response = await fetch(
-          `/api/github/${encodeURIComponent(login)}/repos`,
-          { signal: controller.signal }
-        );
-
-        if (!response.ok) return;
-
-        const data: GithubRepo[] = await response.json();
-
-        if (controller.signal.aborted || !Array.isArray(data)) return;
-
-        setRepoPreview({ login, repos: data.slice(0, 3) });
-      } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") return;
-        // Repos are a nice-to-have for the preview, so we stay quiet on failure.
-      }
-    };
-
-    void loadRepos();
-
-    return () => controller.abort();
-  }, [profile]);
-
   // Reveal the floating "back to top" control once the visitor has scrolled a
   // screenful. The first check is deferred with requestAnimationFrame so we can
   // pick up a restored scroll position without setting state during the effect.
@@ -323,14 +235,6 @@ export default function Home() {
       setLoading(false);
     }
   }
-
-  // Only trust the repo list when it was fetched for the profile we're showing.
-  const profileRepos =
-    profile && repoPreview?.login === profile.login ? repoPreview.repos : null;
-  const previewRepos = profileRepos ?? [];
-  const languageCount = new Set(
-    previewRepos.flatMap((repo) => (repo.language ? [repo.language] : []))
-  ).size;
 
   return (
     <div className="home flex flex-1 flex-col">
@@ -409,12 +313,6 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="home-lead">
-                Gitfolio reads your public GitHub profile and repositories, then
-                lays them out as a clean, shareable developer portfolio. No
-                signup, no build step.
-              </p>
-
               <form className="home-form" onSubmit={handleSubmit}>
                 {/* Handwritten note pointing at the input. Decorative, so it
                     stays out of the way of pointer events. */}
@@ -491,10 +389,14 @@ export default function Home() {
             </div>
 
             {/* Right: the live preview sticker — a small taped-on card that
-                shows either the sample or the profile we just fetched. */}
+                shows either the sample or the profile we just fetched. Once a
+                real profile is in, the whole card links to its portfolio. */}
             <div className="home-stage">
               {profile ? (
-                <PreviewSticker>
+                <PreviewSticker
+                  href={`/${encodeURIComponent(profile.login)}`}
+                  label={`Open ${profile.login}'s portfolio`}
+                >
                   <div className="home-who">
                     <img
                       className="home-av object-cover"
@@ -502,12 +404,10 @@ export default function Home() {
                       alt=""
                     />
                     <div className="min-w-0">
-                      <b className="truncate">
-                        {profile.name || profile.login}
-                      </b>
-                      <span className="line-clamp-2">
-                        {profile.bio || `@${profile.login}`}
-                      </span>
+                      <b className="truncate">{profile.login}</b>
+                      {profile.bio && (
+                        <span className="line-clamp-2">{profile.bio}</span>
+                      )}
                     </div>
                   </div>
 
@@ -524,51 +424,32 @@ export default function Home() {
                         "repositories"
                       )}
                     </div>
-                    <div>
-                      <strong>{profileRepos ? languageCount : "—"}</strong>{" "}
-                      {statLabel(
-                        profileRepos ? languageCount : null,
-                        "language",
-                        "languages"
-                      )}
-                    </div>
                   </div>
 
-                  {previewRepos.map((repo) => (
-                    <div key={repo.id} className="home-repo">
-                      <span className="truncate">{repo.name}</span>
-                      {repo.language && (
-                        <i
-                          style={
-                            {
-                              "--c":
-                                LANGUAGE_COLORS[repo.language] ??
-                                FALLBACK_LANGUAGE_COLOR,
-                            } as CSSProperties
-                          }
-                        >
-                          {repo.language}
-                        </i>
+                  {(profile.location || profile.company) && (
+                    <div className="home-meta">
+                      {profile.location && (
+                        <span>
+                          <MapPin aria-hidden="true" />
+                          <span>{profile.location}</span>
+                        </span>
+                      )}
+                      {profile.company && (
+                        <span>
+                          <Building2 aria-hidden="true" />
+                          <span>{profile.company}</span>
+                        </span>
                       )}
                     </div>
-                  ))}
-
-                  <Link
-                    href={`/${encodeURIComponent(profile.login)}`}
-                    className="home-tag home-hand"
-                  >
-                    open portfolio →
-                  </Link>
+                  )}
                 </PreviewSticker>
               ) : (
                 <PreviewSticker sample>
                   <div className="home-who">
                     <div className="home-av">🐙</div>
                     <div className="min-w-0">
-                      <b className="truncate">{SAMPLE_STICKER.name}</b>
-                      <span className="truncate">
-                        {SAMPLE_STICKER.tagline}
-                      </span>
+                      <b className="truncate">{SAMPLE_STICKER.login}</b>
+                      <span className="truncate">{SAMPLE_STICKER.bio}</span>
                     </div>
                   </div>
 
@@ -579,19 +460,6 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-
-                  {SAMPLE_STICKER.repos.map((repo) => (
-                    <div key={repo.name} className="home-repo">
-                      <span className="truncate">{repo.name}</span>
-                      <i
-                        style={{ "--c": repo.color } as CSSProperties}
-                      >
-                        {repo.language}
-                      </i>
-                    </div>
-                  ))}
-
-                  <span className="home-tag home-hand">sample ✦</span>
                 </PreviewSticker>
               )}
             </div>
@@ -671,17 +539,10 @@ export default function Home() {
 
               <div>
                 <p>
-                  Gitfolio is a small, open-source project that turns a public
-                  GitHub account into a clean, shareable portfolio. Point it at
-                  a username and it reads your profile, your most relevant
-                  repositories, and the languages you work in — then lays them
-                  out in something you can actually scan.
-                </p>
-                <p>
-                  It only ever reads public GitHub data, and it never asks you to
-                  sign up or connect an account. The result lives at its own
-                  address, so you can drop the link into a résumé, a DM, or your
-                  GitHub bio.
+                  Gitfolio turns a public GitHub profile into a clean, shareable
+                  portfolio — no signup and no build step. It reads only public
+                  data, and the result lives at its own address, ready to drop
+                  into a résumé, a DM, or your GitHub bio.
                 </p>
 
                 <hr />
@@ -740,17 +601,37 @@ export default function Home() {
   );
 }
 
-// The taped-on card that both previews share. The sample variant is exposed to
-// assistive technology as a single image with a describing label, so the
-// placeholder profile is announced as a sample rather than read out as if it
-// were a real account.
+// The taped-on card that both previews share. With an `href` the whole card is
+// one link, so the portfolio is reachable by click, keyboard or assistive tech.
+// The sample variant stays inert and is exposed as a single image with a
+// describing label, so the placeholder profile is announced as a sample rather
+// than read out as if it were a real account.
 function PreviewSticker({
+  href,
+  label,
   sample = false,
   children,
 }: {
+  href?: string;
+  label?: string;
   sample?: boolean;
   children: ReactNode;
 }) {
+  const content = (
+    <>
+      <span aria-hidden="true" className="home-tape" />
+      {children}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} aria-label={label} className="home-sticker">
+        {content}
+      </Link>
+    );
+  }
+
   return (
     <div
       className="home-sticker"
@@ -761,8 +642,7 @@ function PreviewSticker({
           : undefined
       }
     >
-      <span aria-hidden="true" className="home-tape" />
-      {children}
+      {content}
     </div>
   );
 }
