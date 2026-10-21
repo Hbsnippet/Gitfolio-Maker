@@ -10,7 +10,11 @@ export const PORTFOLIO_PRESETS = [
 export type PortfolioPreset = (typeof PORTFOLIO_PRESETS)[number];
 export type PortfolioMode = "light" | "dark";
 
-export const DEFAULT_PRESET: PortfolioPreset = "mono";
+// Must match the base palette in app/globals.css: on a first visit there is no
+// `data-pf-theme` attribute, and only mono/sketchbook have attribute overrides,
+// so the theme actually rendered is ledger. Keeping this in step is what makes
+// the selector's initial value agree with the painted page.
+export const DEFAULT_PRESET: PortfolioPreset = "ledger";
 export const DEFAULT_MODE: PortfolioMode = "light";
 
 export const PF_THEME_KEY = "gitfolio:portfolio-theme";
