@@ -29,20 +29,20 @@ export function ProfileHero({ profile }: { profile: GithubProfile }) {
   ].filter((link) => link !== null);
 
   return (
-    <section className="mx-auto grid max-w-6xl items-start gap-8 px-6 pb-12 pt-6 md:grid-cols-12 md:pt-10">
+    <section className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-8 px-6 pb-12 pt-6 md:grid-cols-12 md:pt-10">
       <div className="md:col-span-7 md:pt-6">
         <p className="pf-meta text-xs uppercase tracking-[0.22em] text-pf-faint">
           Public record
         </p>
-        <h1 className="pf-display mt-4 text-4xl leading-[1.05] tracking-tight sm:text-6xl">
+        <h1 className="pf-display mt-4 wrap-anywhere text-4xl leading-[1.05] tracking-tight sm:text-6xl">
           {profile.name || profile.login}
         </h1>
-        <p className="pf-meta mt-2 text-lg text-pf-muted">@{profile.login}</p>
+        <p className="pf-meta mt-2 wrap-anywhere text-lg text-pf-muted">@{profile.login}</p>
         {profile.bio && (
-          <p className="mt-6 max-w-xl text-lg leading-8">{profile.bio}</p>
+          <p className="mt-6 max-w-xl wrap-anywhere text-lg leading-8">{profile.bio}</p>
         )}
         {profile.location && (
-          <p className="mt-4 text-sm text-pf-muted">{profile.location}</p>
+          <p className="mt-4 wrap-anywhere text-sm text-pf-muted">{profile.location}</p>
         )}
 
         <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-4">

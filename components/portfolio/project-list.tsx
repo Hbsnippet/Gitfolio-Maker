@@ -77,7 +77,7 @@ export function ProjectList({ projects }: { projects: GithubRepository[] }) {
 
       {visibleProjects.length > 0 ? (
         <>
-          <div className="pf-projects-grid mt-8 grid items-stretch gap-[var(--pf-grid-gap)] md:grid-cols-2 lg:grid-cols-3">
+          <div className="pf-projects-grid mt-8 grid grid-cols-1 items-stretch gap-[var(--pf-grid-gap)] md:grid-cols-2 lg:grid-cols-3">
             {visibleProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -131,7 +131,7 @@ function ProjectCard({ project }: { project: GithubRepository }) {
       </div>
 
       {project.description?.trim() ? (
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-pf-muted">
+        <p className="mt-3 line-clamp-3 wrap-anywhere text-sm leading-6 text-pf-muted">
           {project.description}
         </p>
       ) : (

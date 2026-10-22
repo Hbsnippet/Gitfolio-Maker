@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronDown, Link2, Moon, Share2, Sun } from "lucide-react";
+import { Check, ChevronDown, Copy, Moon, Share2, Sun } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   applyPortfolioPrefs,
@@ -27,10 +27,15 @@ export function PortfolioControls() {
   const { preset, mode } = parsePortfolioSnapshot(snapshot);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
 
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const shareRef = useRef<HTMLDivElement>(null);
+  const shareBtnRef = useRef<HTMLButtonElement>(null);
+  const copyBtnRef = useRef<HTMLButtonElement>(null);
 
   // Clear transient share/copy feedback.
   useEffect(() => {
@@ -62,6 +67,38 @@ export function PortfolioControls() {
       document.removeEventListener("touchstart", onPointerDown);
     };
   }, [open]);
+
+  // Share popup: an outside click/tap or Escape dismisses it. Escape also hands
+  // focus back to the Share button; an outside click is left to move focus
+  // wherever the user actually clicked.
+  useEffect(() => {
+    if (!shareOpen) return;
+    function onPointerDown(event: MouseEvent | TouchEvent) {
+      if (!shareRef.current?.contains(event.target as Node)) {
+        setShareOpen(false);
+      }
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setShareOpen(false);
+      shareBtnRef.current?.focus();
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("touchstart", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("touchstart", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [shareOpen]);
+
+  // Land focus on "Copy link" when the popup opens, so the keyboard flow is
+  // Share → Enter → Enter → Escape.
+  useEffect(() => {
+    if (shareOpen) copyBtnRef.current?.focus();
+  }, [shareOpen]);
 
   function selectPreset(next: PortfolioPreset) {
     applyPortfolioPrefs(next, mode);
@@ -102,36 +139,28 @@ export function PortfolioControls() {
     applyPortfolioPrefs(preset, next);
   }
 
-  async function copyLink() {
-    const url = portfolioUrl();
-    try {
-      await navigator.clipboard.writeText(url);
-      setFeedback("Link copied");
-    } catch {
-      setFeedback("Could not copy link");
-    }
+  function toggleShare() {
+    setFeedback(null);
+    if (!shareOpen) setShareUrl(portfolioUrl());
+    setShareOpen((value) => !value);
   }
 
-  async function handleShare() {
-    const url = portfolioUrl();
-
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ title: document.title, url });
-        return;
-      } catch {
-        // User dismissed the sheet or share failed; fall through to copy.
-      }
+  async function copyShareLink() {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setFeedback("Link copied!");
+    } catch {
+      // No clipboard API (insecure context) or permission denied: report the
+      // failure rather than claiming success.
+      setFeedback("Could not copy link");
     }
-
-    await copyLink();
   }
 
   const activeMeta = PRESET_META[preset];
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <div ref={rootRef} className="relative" onKeyDown={onRootKeyDown}>
+      <div ref={rootRef} className="sm:relative" onKeyDown={onRootKeyDown}>
         <button
           ref={triggerRef}
           type="button"
@@ -159,12 +188,14 @@ export function PortfolioControls() {
           <div
             role="menu"
             aria-label="Visual theme"
-            // Below `sm` the toolbar wraps and the trigger can sit hard against
-            // the left edge, so the menu opens rightwards from the trigger and
-            // is capped to the viewport — a right-anchored fixed width would
-            // run off the left of the screen on phones. From `sm` up the
-            // trigger is on the right, where the original anchoring still fits.
-            className="absolute left-0 z-20 mt-2 w-[min(280px,calc(100vw_-_48px))] max-w-[calc(100vw_-_48px)] origin-top-left animate-in fade-in-0 zoom-in-95 overflow-hidden rounded-xl border border-pf-border bg-pf-card p-1 shadow-xl shadow-black/5 sm:left-auto sm:right-0 sm:w-60 sm:max-w-none sm:origin-top-right"
+            // Below `sm` the header can wrap and the trigger sits anywhere along
+            // the row, so anchoring the menu to the trigger pushed it past the
+            // right edge on mid-size phones. Instead the menu is placed against
+            // the header's content box (the nav is its containing block), left
+            // aligned with the page gutters like the Share popup. From `sm` up
+            // the wrapper is the containing block again and the menu keeps its
+            // original trigger-anchored position.
+            className="absolute left-6 top-[calc(100%_-_1rem)] z-20 w-[min(280px,calc(100vw_-_3rem))] origin-top-left animate-in fade-in-0 zoom-in-95 overflow-hidden rounded-xl border border-pf-border bg-pf-card p-1 shadow-xl shadow-black/5 sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-60 sm:origin-top-right"
           >
             {PORTFOLIO_PRESETS.map((id, index) => {
               const meta = PRESET_META[id];
@@ -220,27 +251,53 @@ export function PortfolioControls() {
         )}
       </button>
 
-      <button type="button" onClick={handleShare} className="pf-btn pf-btn-primary">
-        <Share2 aria-hidden className="h-4 w-4" />
-        <span className="hidden sm:inline">Share</span>
-      </button>
+      {/* One Share control: it opens the copy-link popup. The popup is positioned
+          against the header's content box (the nav is its containing block)
+          rather than against this button, so it stays inside the viewport when
+          the toolbar wraps onto a second row on narrow screens. */}
+      <div ref={shareRef}>
+        <button
+          ref={shareBtnRef}
+          type="button"
+          onClick={toggleShare}
+          aria-haspopup="dialog"
+          aria-expanded={shareOpen}
+          aria-label="Share"
+          className="pf-btn pf-btn-primary"
+        >
+          <Share2 aria-hidden className="h-4 w-4" />
+          <span className="hidden sm:inline">Share</span>
+        </button>
 
-      <button
-        type="button"
-        onClick={copyLink}
-        aria-label="Copy link to this portfolio"
-        className="pf-icon-btn"
-      >
-        <Link2 aria-hidden className="h-4 w-4" />
-      </button>
-
-      <span
-        role="status"
-        aria-live="polite"
-        className="sr-only sm:not-sr-only sm:text-xs sm:text-pf-muted"
-      >
-        {feedback ?? ""}
-      </span>
+        {shareOpen && (
+          <div
+            role="dialog"
+            aria-label="Share portfolio"
+            className="absolute right-6 top-[calc(100%_-_1rem)] z-20 w-[calc(100vw_-_3rem)] origin-top-right animate-in fade-in-0 zoom-in-95 rounded-xl border border-pf-border bg-pf-card p-4 shadow-xl shadow-black/5 sm:w-[min(300px,calc(100vw_-_3rem))]"
+          >
+            <p className="text-sm font-semibold text-pf-fg">Share portfolio</p>
+            <p className="mt-2 break-all rounded-lg border border-pf-border bg-pf-card-soft px-2.5 py-2 font-mono text-xs leading-relaxed text-pf-muted">
+              {shareUrl}
+            </p>
+            <button
+              ref={copyBtnRef}
+              type="button"
+              onClick={copyShareLink}
+              className="pf-btn pf-btn-primary mt-3 w-full"
+            >
+              <Copy aria-hidden className="h-4 w-4" />
+              Copy link
+            </button>
+            <span
+              role="status"
+              aria-live="polite"
+              className="mt-2 block min-h-4 text-xs text-pf-muted"
+            >
+              {feedback ?? ""}
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

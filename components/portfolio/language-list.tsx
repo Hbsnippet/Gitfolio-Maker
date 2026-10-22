@@ -6,7 +6,7 @@ export function LanguageList({ languages }: { languages: GithubLanguageShare[] }
   const largest = languages[0]?.repositories ?? 1;
 
   return (
-    <section className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-12">
+    <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-8 md:grid-cols-12">
       <div className="md:col-span-4">
         <h2 className="pf-display text-4xl tracking-tight" data-pf-marker="03 / languages">
           Languages

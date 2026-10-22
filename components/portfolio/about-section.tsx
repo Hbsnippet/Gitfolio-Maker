@@ -21,7 +21,7 @@ export function AboutSection({
   ].filter((item) => item !== null);
 
   return (
-    <section className="mx-auto grid max-w-6xl gap-8 px-6 py-8 md:grid-cols-12">
+    <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-8 md:grid-cols-12">
       <div className="md:col-span-4">
         <h2 className="pf-display text-4xl tracking-tight" data-pf-marker="01 / about">
           About
@@ -29,7 +29,7 @@ export function AboutSection({
       </div>
       <div className="md:col-span-7 md:col-start-6">
         {profile.bio?.trim() && (
-          <p className="max-w-xl text-lg leading-8">{profile.bio}</p>
+          <p className="max-w-xl wrap-anywhere text-lg leading-8">{profile.bio}</p>
         )}
 
         {highlights.length > 0 && (
@@ -41,12 +41,12 @@ export function AboutSection({
             {highlights.map((item) => (
               <div
                 key={item.label}
-                className="grid gap-1 py-4 sm:grid-cols-[9rem_1fr]"
+                className="grid grid-cols-1 gap-1 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]"
               >
                 <dt className="pf-meta text-xs uppercase tracking-[0.16em] text-pf-faint">
                   {item.label}
                 </dt>
-                <dd>{item.value}</dd>
+                <dd className="wrap-anywhere">{item.value}</dd>
               </div>
             ))}
           </dl>
